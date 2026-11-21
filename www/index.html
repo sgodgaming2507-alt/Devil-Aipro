@@ -7,103 +7,264 @@
   <meta name="theme-color" content="#070914">
   <title>DEVIL AI PRO</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .period-card {
+      margin-bottom: 18px;
+      padding: 20px;
+      border: 1px solid #24314b;
+      border-radius: 18px;
+      background: linear-gradient(145deg,#11182a,#090d18);
+    }
+    .period-label {
+      color: #91a3c4;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+    .period-number {
+      font-size: 25px;
+      font-weight: 800;
+      color: #38e5ff;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
+    .timer-display {
+      font-size: 42px;
+      font-weight: 900;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
+    .demo-bs {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .bs-tile {
+      flex: 1;
+      text-align: center;
+      padding: 18px 10px;
+      border-radius: 14px;
+      border: 1px solid #29334a;
+      background: #111827;
+    }
+    .bs-tile h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: #9aa9c5;
+    }
+    .bs-tile strong {
+      font-size: 23px;
+      color: #fff;
+    }
+    .demo-note {
+      font-size: 11px;
+      color: #8a96aa;
+      margin-top: 12px;
+    }
+  </style>
 </head>
+
 <body>
-  <main class="app-shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">D</div>
-        <div>
-          <h1>DEVIL <span>AI PRO</span></h1>
-          <p>PRIVATE ONLINE LAB</p>
-        </div>
-      </div>
-      <div id="connection" class="connection">
-        <span class="dot"></span>
-        CONNECTING
-      </div>
-    </header>
+<main class="app-shell">
 
-    <section class="welcome">
-      <span class="eyebrow">PRIVATE CLOUD SYSTEM</span>
-      <h2>Welcome to<br><span>AI Laboratory</span></h2>
-      <p>Secure online dashboard and statistical simulation environment.</p>
-    </section>
-
-    <section class="server-card">
-      <div class="server-head">
-        <span>SERVER STATUS</span>
-        <span class="server-icon">◈</span>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">D</div>
+      <div>
+        <h1>DEVIL <span>AI PRO</span></h1>
+        <p>PRIVATE ONLINE LAB</p>
       </div>
-      <h3 id="serverText">Checking connection...</h3>
-      <p id="serverDetail">Connecting to remote service</p>
-      <div class="server-line">
-        <div id="serverBar"></div>
-      </div>
-      <button id="retryBtn" class="secondary-btn">RECONNECT</button>
-    </section>
-
-    <section class="main-card">
-      <div class="section-heading">
-        <div>
-          <small>DEMO ENVIRONMENT</small>
-          <h3>Random Data Lab</h3>
-        </div>
-        <span class="demo-tag">SIMULATION</span>
-      </div>
-
-      <div class="sample-box">
-        <span class="sample-label">SAMPLE VALUE</span>
-        <div id="sampleValue" class="sample-value">--</div>
-        <div id="sampleTag" class="sample-tag">READY</div>
-        <p id="sampleInfo">Connected users can run a demo sample.</p>
-      </div>
-
-      <button id="sampleBtn" class="main-btn" disabled>
-        GENERATE SAMPLE
-      </button>
-
-      <div class="stats">
-        <div class="stat-box">
-          <small>RUNS</small>
-          <strong id="runs">0</strong>
-        </div>
-        <div class="stat-box">
-          <small>SESSION</small>
-          <strong id="session">ACTIVE</strong>
-        </div>
-      </div>
-    </section>
-
-    <section class="main-card">
-      <div class="section-heading">
-        <div>
-          <small>ACTIVITY</small>
-          <h3>Recent Sessions</h3>
-        </div>
-        <button id="clearBtn" class="text-btn">CLEAR</button>
-      </div>
-      <div id="history" class="history">
-        <div class="empty">No activity available</div>
-      </div>
-    </section>
-
-    <footer>
-      <div class="footer-logo">DEVIL AI PRO</div>
-      <p>Online Demo • Educational Simulation</p>
-      <p>Random samples are not forecasts or guarantees.</p>
-    </footer>
-  </main>
-
-  <div id="offlineScreen" class="offline-screen hidden">
-    <div class="offline-card">
-      <div class="offline-icon">⌁</div>
-      <h2>Connection Lost</h2>
-      <p>This application requires an active internet connection and an available server.</p>
-      <button id="offlineRetry" class="main-btn">TRY AGAIN</button>
     </div>
-  </div>
 
-  <script src="app.js"></script>
+    <div id="connection" class="connection">
+      <span class="dot"></span> CONNECTING
+    </div>
+  </header>
+
+  <section class="welcome">
+    <span class="eyebrow">PRIVATE CLOUD SYSTEM</span>
+    <h2>Welcome to<br><span>AI Laboratory</span></h2>
+    <p>Secure online dashboard and statistical simulation environment.</p>
+  </section>
+
+  <section class="server-card">
+    <div class="server-head">
+      <span>SERVER STATUS</span>
+      <span class="server-icon">◈</span>
+    </div>
+
+    <h3 id="serverText">Checking connection...</h3>
+    <p id="serverDetail">Connecting to remote service</p>
+
+    <div class="server-line">
+      <div id="serverBar"></div>
+    </div>
+
+    <button id="retryBtn" class="secondary-btn">RECONNECT</button>
+  </section>
+
+  <!-- REAL TIME PERIOD -->
+  <section class="period-card">
+    <div class="period-label">LIVE PERIOD ID</div>
+
+    <div id="periodNumber" class="period-number">
+      Loading...
+    </div>
+
+    <div class="period-label">NEXT MINUTE IN</div>
+
+    <div id="countdown" class="timer-display">
+      00:60
+    </div>
+
+    <p class="demo-note">
+      Clock synchronized with your device time.
+    </p>
+  </section>
+
+  <!-- BIG / SMALL DEMO DISPLAY -->
+  <section class="main-card">
+    <div class="section-heading">
+      <div>
+        <small>DEMO DISPLAY</small>
+        <h3>Big / Small</h3>
+      </div>
+      <span class="demo-tag">SIMULATION</span>
+    </div>
+
+    <div class="demo-bs">
+      <div class="bs-tile">
+        <h3>BIG</h3>
+        <strong>5–9</strong>
+      </div>
+
+      <div class="bs-tile">
+        <h3>SMALL</h3>
+        <strong>0–4</strong>
+      </div>
+    </div>
+
+    <p class="demo-note">
+      Demo classification only. No outcome prediction.
+    </p>
+  </section>
+
+  <!-- RANDOM DATA LAB -->
+  <section class="main-card">
+    <div class="section-heading">
+      <div>
+        <small>DEMO ENVIRONMENT</small>
+        <h3>Random Data Lab</h3>
+      </div>
+      <span class="demo-tag">SIMULATION</span>
+    </div>
+
+    <div class="sample-box">
+      <span class="sample-label">SAMPLE VALUE</span>
+
+      <div id="sampleValue" class="sample-value">--</div>
+
+      <div id="sampleTag" class="sample-tag">READY</div>
+
+      <p id="sampleInfo">
+        Connected users can run a demo sample.
+      </p>
+    </div>
+
+    <button id="sampleBtn" class="main-btn" disabled>
+      GENERATE SAMPLE
+    </button>
+
+    <div class="stats">
+      <div class="stat-box">
+        <small>RUNS</small>
+        <strong id="runs">0</strong>
+      </div>
+
+      <div class="stat-box">
+        <small>SESSION</small>
+        <strong id="session">ACTIVE</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY -->
+  <section class="main-card">
+    <div class="section-heading">
+      <div>
+        <small>ACTIVITY</small>
+        <h3>Recent Sessions</h3>
+      </div>
+
+      <button id="clearBtn" class="text-btn">CLEAR</button>
+    </div>
+
+    <div id="history" class="history">
+      <div class="empty">No activity available</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">DEVIL AI PRO</div>
+    <p>Online Demo • Educational Simulation</p>
+    <p>Random samples are not forecasts or guarantees.</p>
+  </footer>
+</main>
+
+<!-- OFFLINE SCREEN -->
+<div id="offlineScreen" class="offline-screen hidden">
+  <div class="offline-card">
+    <div class="offline-icon">⌁</div>
+    <h2>Connection Lost</h2>
+
+    <p>
+      This application requires an active internet connection
+      and an available server.
+    </p>
+
+    <button id="offlineRetry" class="main-btn">
+      TRY AGAIN
+    </button>
+  </div>
+</div>
+
+<!-- REAL TIME CLOCK / PERIOD -->
+<script>
+(function () {
+  const periodEl = document.getElementById("periodNumber");
+  const timerEl = document.getElementById("countdown");
+
+  function updateClock() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hour = String(now.getHours()).padStart(2, "0");
+    const minute = String(now.getMinutes()).padStart(2, "0");
+    const second = now.getSeconds();
+
+    // Device-clock minute ID for this demo
+    const period = `${year}${month}${day}${hour}${minute}`;
+
+    // Countdown to next minute
+    const remaining = 60 - second;
+
+    if (periodEl) {
+      periodEl.textContent = period;
+    }
+
+    if (timerEl) {
+      timerEl.textContent =
+        `00:${String(remaining).padStart(2, "0")}`;
+    }
+  }
+
+  updateClock();
+  setInterval(updateClock, 1000);
+})();
+</script>
+
+<script src="app.js"></script>
+
 </body>
 </html>
