@@ -1,0 +1,9 @@
+
+{
+  "appId": "com.devil.aipro",
+  "appName": "Devil AI Pro",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}
