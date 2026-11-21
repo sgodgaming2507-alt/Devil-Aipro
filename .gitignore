@@ -1,0 +1,9 @@
+
+node_modules/
+android/
+.env
+.env.*
+!.env.example
+*.apk
+*.aab
+.DS_Store
