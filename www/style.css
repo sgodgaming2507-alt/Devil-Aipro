@@ -1,0 +1,390 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800&display=swap');
+
+:root {
+  --bg: #070914;
+  --card: #101525;
+  --cyan: #00eaff;
+  --green: #00e6a0;
+  --muted: #8792aa;
+  --line: #263149;
+  --white: #f2f6ff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 50% -10%, #163250, transparent 55%),
+    var(--bg);
+  color: var(--white);
+  font-family: Inter, sans-serif;
+  min-height: 100vh;
+}
+
+.app-shell {
+  max-width: 520px;
+  margin: auto;
+  padding: 18px 15px 30px;
+}
+
+.topbar, .brand, .section-heading, .server-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  gap: 11px;
+}
+
+.logo {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #122c44, #0b1525);
+  border: 1px solid #00eaff55;
+  border-radius: 13px;
+  color: var(--cyan);
+  font: 800 24px Orbitron, sans-serif;
+  box-shadow: 0 0 20px #00eaff12;
+}
+
+.brand h1 {
+  font: 700 13px Orbitron, sans-serif;
+  letter-spacing: 1px;
+}
+
+.brand h1 span {
+  color: var(--cyan);
+}
+
+.brand p {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-top: 5px;
+}
+
+.connection {
+  font-size: 9px;
+  color: #ffc45d;
+  border: 1px solid #ffc45d25;
+  padding: 8px 9px;
+  border-radius: 30px;
+}
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.connection.online {
+  color: var(--green);
+}
+
+.connection.offline {
+  color: #ff577c;
+}
+
+.welcome {
+  padding: 34px 4px 23px;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  font-size: 9px;
+  letter-spacing: 3px;
+}
+
+.welcome h2 {
+  font: 800 32px Orbitron, sans-serif;
+  line-height: 1.35;
+  margin-top: 12px;
+}
+
+.welcome h2 span {
+  color: var(--cyan);
+}
+
+.welcome p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin-top: 11px;
+}
+
+.server-card, .main-card {
+  background: linear-gradient(145deg, #111a2d, #0c1120);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+.server-head {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.server-icon {
+  font-size: 20px;
+  color: var(--cyan);
+}
+
+.server-card h3 {
+  margin-top: 15px;
+  font: 600 17px Orbitron, sans-serif;
+}
+
+.server-card p {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.server-line {
+  height: 5px;
+  background: #222e44;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 18px;
+}
+
+#serverBar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #00bfff, #00f5a0);
+  transition: width .5s;
+}
+
+.secondary-btn {
+  width: 100%;
+  margin-top: 15px;
+  background: #ffffff05;
+  border: 1px solid #30415c;
+  border-radius: 10px;
+  padding: 12px;
+  color: #dce8ff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.section-heading {
+  margin-bottom: 16px;
+}
+
+.section-heading small {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.section-heading h3 {
+  font: 600 16px Orbitron, sans-serif;
+  margin-top: 6px;
+}
+
+.demo-tag {
+  font-size: 8px;
+  color: var(--cyan);
+  border: 1px solid #00eaff25;
+  background: #00eaff0b;
+  border-radius: 7px;
+  padding: 7px;
+}
+
+.sample-box {
+  background: #070c17;
+  border: 1px solid #00eaff19;
+  border-radius: 15px;
+  text-align: center;
+  padding: 23px 10px;
+}
+
+.sample-label {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.sample-value {
+  font: 800 58px Orbitron, sans-serif;
+  margin: 10px 0;
+  text-shadow: 0 0 25px #00eaff20;
+}
+
+.sample-tag {
+  display: inline-block;
+  color: var(--green);
+  background: #00e6a010;
+  border: 1px solid #00e6a025;
+  border-radius: 30px;
+  padding: 7px 15px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.sample-box p {
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 14px;
+}
+
+.main-btn {
+  width: 100%;
+  padding: 16px;
+  margin: 14px 0;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(100deg, #00bfff, #00f5a0);
+  color: #07121c;
+  font: 800 11px Orbitron, sans-serif;
+  letter-spacing: 1px;
+}
+
+.main-btn:disabled {
+  opacity: .4;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.stat-box {
+  background: #ffffff04;
+  border: 1px solid var(--line);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.stat-box small {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+}
+
+.stat-box strong {
+  display: block;
+  font: 700 17px Orbitron, sans-serif;
+  margin-top: 8px;
+}
+
+.text-btn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 9px;
+}
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--line);
+  background: #ffffff03;
+  border-radius: 11px;
+  padding: 12px;
+  animation: fadein .2s;
+}
+
+.history-row small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.history-row strong {
+  font-size: 12px;
+}
+
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.9;
+  padding: 24px 5px;
+}
+
+.footer-logo {
+  font: 700 11px Orbitron, sans-serif;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+
+.offline-screen {
+  position: fixed;
+  inset: 0;
+  background: #050711f5;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  z-index: 99;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.offline-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--card);
+  border: 1px solid #ff577c40;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+}
+
+.offline-icon {
+  font-size: 40px;
+  color: #ff577c;
+  margin-bottom: 15px;
+}
+
+.offline-card h2 {
+  font: 700 20px Orbitron, sans-serif;
+}
+
+.offline-card p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 12px 0;
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 360px) {
+  .welcome h2 { font-size: 27px; }
+  .app-shell { padding-inline: 12px; }
+}
