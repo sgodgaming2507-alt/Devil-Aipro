@@ -482,10 +482,6 @@
       color: #91a3c4;
       margin-bottom: 4px;
     }
-
-    .hidden {
-      display: none !important;
-    }
   </style>
 </head>
 
@@ -673,8 +669,8 @@
 
   let currentPeriod = "";
   let runCount = 0;
+  const lockedResultsByPeriod = {};
 
-  // 1. Accurate Period ID calculation (UTC Standard / IST Standard / HHMM)
   function getFormattedPeriod(now) {
     const mode = periodModeEl.value;
 
@@ -694,7 +690,6 @@
       return `${y}${m}${d}10001${String(totalMinutes).padStart(4, "0")}`;
     }
 
-    // Fallback HHMM format
     const y = now.getFullYear();
     const m = String(now.getMonth() + 1).padStart(2, "0");
     const d = String(now.getDate()).padStart(2, "0");
@@ -717,7 +712,6 @@
   updateClock();
   setInterval(updateClock, 1000);
 
-  // 2. Server connection simulation
   function connectServer() {
     connectionEl.classList.remove("online");
     connectionEl.innerHTML = '<span class="dot"></span> CONNECTING';
@@ -739,25 +733,42 @@
   retryBtn.addEventListener("click", connectServer);
   connectServer();
 
-  // 3. Generate Number + Big/Small simultaneously
-  function generateSample() {
-    const num = Math.floor(Math.random() * 10); // 0 to 9
+  function applyResultToUI(periodId, num, fromCache) {
     const isBig = num >= 5;
     const label = isBig ? "BIG" : "SMALL";
 
-    // Update main sample display
     sampleValueEl.textContent = num;
     sampleSizeEl.textContent = label;
     sampleSizeEl.className = "sample-bs-badge " + (isBig ? "big" : "small");
 
-    // Highlight Big / Small tiles
     bigTile.classList.toggle("active-big", isBig);
     smallTile.classList.toggle("active-small", !isBig);
 
-    sampleTagEl.textContent = `PERIOD ${currentPeriod.slice(-4)}`;
-    sampleInfoEl.textContent = `Result: ${label} (${num}) generated for current period.`;
+    sampleTagEl.textContent = fromCache
+      ? `LOCKED • PERIOD ${periodId.slice(-4)}`
+      : `PERIOD ${periodId.slice(-4)}`;
 
-    // Update Runs & History
+    sampleInfoEl.textContent = fromCache
+      ? `Is period (${periodId.slice(-4)}) ka result pehle se lock hai: ${label} (${num}).`
+      : `Result: ${label} (${num}) generated for current period.`;
+  }
+
+  function generateSample() {
+    if (!currentPeriod) return;
+
+    if (Object.prototype.hasOwnProperty.call(lockedResultsByPeriod, currentPeriod)) {
+      applyResultToUI(currentPeriod, lockedResultsByPeriod[currentPeriod], true);
+      return;
+    }
+
+    const num = Math.floor(Math.random() * 10);
+    lockedResultsByPeriod[currentPeriod] = num;
+
+    applyResultToUI(currentPeriod, num, false);
+
+    const isBig = num >= 5;
+    const label = isBig ? "BIG" : "SMALL";
+
     runCount++;
     runsEl.textContent = runCount;
 
