@@ -1,5 +1,6 @@
 
-const API_BASE = "https://YOUR-SERVER-DOMAIN.example";
+
+const API_BASE = "https://devil-aipro.onrender.com";
 
 const $ = (id) => document.getElementById(id);
 
