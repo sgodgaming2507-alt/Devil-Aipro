@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070914">
+  <title>DEVIL AI PRO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">D</div>
+        <div>
+          <h1>DEVIL <span>AI PRO</span></h1>
+          <p>PRIVATE ONLINE LAB</p>
+        </div>
+      </div>
+      <div id="connection" class="connection">
+        <span class="dot"></span>
+        CONNECTING
+      </div>
+    </header>
+
+    <section class="welcome">
+      <span class="eyebrow">PRIVATE CLOUD SYSTEM</span>
+      <h2>Welcome to<br><span>AI Laboratory</span></h2>
+      <p>Secure online dashboard and statistical simulation environment.</p>
+    </section>
+
+    <section class="server-card">
+      <div class="server-head">
+        <span>SERVER STATUS</span>
+        <span class="server-icon">◈</span>
+      </div>
+      <h3 id="serverText">Checking connection...</h3>
+      <p id="serverDetail">Connecting to remote service</p>
+      <div class="server-line">
+        <div id="serverBar"></div>
+      </div>
+      <button id="retryBtn" class="secondary-btn">RECONNECT</button>
+    </section>
+
+    <section class="main-card">
+      <div class="section-heading">
+        <div>
+          <small>DEMO ENVIRONMENT</small>
+          <h3>Random Data Lab</h3>
+        </div>
+        <span class="demo-tag">SIMULATION</span>
+      </div>
+
+      <div class="sample-box">
+        <span class="sample-label">SAMPLE VALUE</span>
+        <div id="sampleValue" class="sample-value">--</div>
+        <div id="sampleTag" class="sample-tag">READY</div>
+        <p id="sampleInfo">Connected users can run a demo sample.</p>
+      </div>
+
+      <button id="sampleBtn" class="main-btn" disabled>
+        GENERATE SAMPLE
+      </button>
+
+      <div class="stats">
+        <div class="stat-box">
+          <small>RUNS</small>
+          <strong id="runs">0</strong>
+        </div>
+        <div class="stat-box">
+          <small>SESSION</small>
+          <strong id="session">ACTIVE</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="main-card">
+      <div class="section-heading">
+        <div>
+          <small>ACTIVITY</small>
+          <h3>Recent Sessions</h3>
+        </div>
+        <button id="clearBtn" class="text-btn">CLEAR</button>
+      </div>
+      <div id="history" class="history">
+        <div class="empty">No activity available</div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-logo">DEVIL AI PRO</div>
+      <p>Online Demo • Educational Simulation</p>
+      <p>Random samples are not forecasts or guarantees.</p>
+    </footer>
+  </main>
+
+  <div id="offlineScreen" class="offline-screen hidden">
+    <div class="offline-card">
+      <div class="offline-icon">⌁</div>
+      <h2>Connection Lost</h2>
+      <p>This application requires an active internet connection and an available server.</p>
+      <button id="offlineRetry" class="main-btn">TRY AGAIN</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
