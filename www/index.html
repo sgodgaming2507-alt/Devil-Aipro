@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,59 +5,486 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#070914">
   <title>DEVIL AI PRO</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    .period-card {
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: #070914;
+      color: #e6eefc;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #38e5ff, #2563eb);
+      color: #050814;
+      font-weight: 900;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand h1 {
+      font-size: 18px;
+      letter-spacing: 1px;
+    }
+
+    .brand h1 span {
+      color: #38e5ff;
+    }
+
+    .brand p {
+      font-size: 10px;
+      color: #8a96aa;
+      letter-spacing: 1.5px;
+    }
+
+    .connection {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #11182a;
+      border: 1px solid #24314b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fbbf24;
+    }
+
+    .connection.online {
+      color: #34d399;
+      border-color: rgba(52, 211, 153, 0.4);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* WELCOME */
+    .welcome {
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      color: #38e5ff;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .welcome h2 {
+      font-size: 26px;
+      margin: 6px 0;
+      line-height: 1.2;
+    }
+
+    .welcome h2 span {
+      color: #38e5ff;
+    }
+
+    .welcome p {
+      font-size: 13px;
+      color: #91a3c4;
+    }
+
+    /* CARDS */
+    .server-card,
+    .period-card,
+    .main-card {
       margin-bottom: 18px;
       padding: 20px;
       border: 1px solid #24314b;
       border-radius: 18px;
-      background: linear-gradient(145deg,#11182a,#090d18);
+      background: linear-gradient(145deg, #11182a, #090d18);
     }
+
+    .server-head,
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .server-head span {
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      color: #91a3c4;
+    }
+
+    .server-card h3 {
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+
+    .server-card p {
+      font-size: 12px;
+      color: #8a96aa;
+    }
+
+    .server-line {
+      height: 5px;
+      background: #1b2438;
+      border-radius: 99px;
+      overflow: hidden;
+      margin: 14px 0;
+    }
+
+    #serverBar {
+      height: 100%;
+      width: 30%;
+      background: linear-gradient(90deg, #38e5ff, #34d399);
+      transition: width 0.5s ease;
+    }
+
+    /* PERIOD CARD */
+    .period-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
     .period-label {
       color: #91a3c4;
-      font-size: 12px;
+      font-size: 11px;
       letter-spacing: 2px;
+      text-transform: uppercase;
     }
+
+    .tz-select {
+      background: #111827;
+      color: #38e5ff;
+      border: 1px solid #29334a;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      outline: none;
+    }
+
     .period-number {
-      font-size: 25px;
+      font-size: 23px;
       font-weight: 800;
       color: #38e5ff;
-      margin: 12px 0;
+      margin: 10px 0 14px;
+      letter-spacing: 1px;
       overflow-wrap: anywhere;
     }
+
     .timer-display {
-      font-size: 42px;
+      font-size: 40px;
       font-weight: 900;
       color: #fff;
       font-variant-numeric: tabular-nums;
+      margin-top: 4px;
     }
+
+    /* BIG / SMALL TILES */
+    .demo-tag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(56, 229, 255, 0.12);
+      color: #38e5ff;
+      border: 1px solid rgba(56, 229, 255, 0.3);
+    }
+
+    .section-heading small {
+      color: #91a3c4;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+    }
+
+    .section-heading h3 {
+      font-size: 18px;
+    }
+
     .demo-bs {
       display: flex;
       gap: 12px;
-      margin-top: 16px;
+      margin-top: 14px;
     }
+
     .bs-tile {
       flex: 1;
       text-align: center;
-      padding: 18px 10px;
+      padding: 16px 10px;
       border-radius: 14px;
       border: 1px solid #29334a;
       background: #111827;
+      transition: all 0.25s ease;
     }
+
     .bs-tile h3 {
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       font-size: 14px;
       color: #9aa9c5;
     }
+
     .bs-tile strong {
-      font-size: 23px;
+      font-size: 22px;
       color: #fff;
     }
+
+    .bs-tile.active-big {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.16);
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.25);
+    }
+
+    .bs-tile.active-big h3,
+    .bs-tile.active-big strong {
+      color: #fbbf24;
+    }
+
+    .bs-tile.active-small {
+      border-color: #38e5ff;
+      background: rgba(56, 229, 255, 0.16);
+      box-shadow: 0 0 18px rgba(56, 229, 255, 0.25);
+    }
+
+    .bs-tile.active-small h3,
+    .bs-tile.active-small strong {
+      color: #38e5ff;
+    }
+
     .demo-note {
       font-size: 11px;
       color: #8a96aa;
       margin-top: 12px;
+    }
+
+    /* SAMPLE BOX */
+    .sample-box {
+      background: #0b101d;
+      border: 1px solid #24314b;
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+      margin: 14px 0;
+    }
+
+    .sample-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: #91a3c4;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin: 12px 0;
+    }
+
+    .sample-value {
+      font-size: 46px;
+      font-weight: 900;
+      color: #38e5ff;
+      line-height: 1;
+    }
+
+    .sample-bs-badge {
+      font-size: 22px;
+      font-weight: 900;
+      padding: 8px 16px;
+      border-radius: 12px;
+      background: #162035;
+      color: #91a3c4;
+      border: 1px solid #2b3a59;
+      letter-spacing: 1px;
+    }
+
+    .sample-bs-badge.big {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      border-color: #f59e0b;
+    }
+
+    .sample-bs-badge.small {
+      background: rgba(56, 229, 255, 0.18);
+      color: #38e5ff;
+      border-color: #38e5ff;
+    }
+
+    .sample-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #172033;
+      color: #34d399;
+      margin-bottom: 8px;
+    }
+
+    #sampleInfo {
+      font-size: 12px;
+      color: #8a96aa;
+    }
+
+    /* BUTTONS */
+    .main-btn,
+    .secondary-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .main-btn {
+      background: linear-gradient(135deg, #38e5ff, #2563eb);
+      color: #050814;
+    }
+
+    .main-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn {
+      background: #182236;
+      color: #e6eefc;
+      border: 1px solid #2b3a59;
+    }
+
+    .text-btn {
+      background: transparent;
+      border: none;
+      color: #38e5ff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* STATS */
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .stat-box {
+      flex: 1;
+      background: #0b101d;
+      border: 1px solid #24314b;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .stat-box small {
+      display: block;
+      font-size: 10px;
+      color: #91a3c4;
+      margin-bottom: 4px;
+    }
+
+    .stat-box strong {
+      font-size: 16px;
+      color: #fff;
+    }
+
+    /* HISTORY */
+    .history {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: #0b101d;
+      border: 1px solid #24314b;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .history-period {
+      color: #91a3c4;
+      font-family: monospace;
+    }
+
+    .history-result {
+      font-weight: 800;
+    }
+
+    .history-result.big {
+      color: #fbbf24;
+    }
+
+    .history-result.small {
+      color: #38e5ff;
+    }
+
+    .empty {
+      text-align: center;
+      font-size: 12px;
+      color: #8a96aa;
+      padding: 14px 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 16px 0 24px;
+      font-size: 11px;
+      color: #70809c;
+    }
+
+    .footer-logo {
+      font-weight: 800;
+      color: #91a3c4;
+      margin-bottom: 4px;
+    }
+
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
@@ -104,7 +530,14 @@
 
   <!-- REAL TIME PERIOD -->
   <section class="period-card">
-    <div class="period-label">LIVE PERIOD ID</div>
+    <div class="period-header">
+      <div class="period-label">LIVE PERIOD ID (1 MIN)</div>
+      <select id="periodMode" class="tz-select" title="Select Period Format">
+        <option value="utc_std">UTC Standard (10001+)</option>
+        <option value="ist_std">IST Standard (10001+)</option>
+        <option value="hhmm">Date + HHMM</option>
+      </select>
+    </div>
 
     <div id="periodNumber" class="period-number">
       Loading...
@@ -117,7 +550,7 @@
     </div>
 
     <p class="demo-note">
-      Clock synchronized with your device time.
+      Switch period format above if your platform uses UTC or IST counter.
     </p>
   </section>
 
@@ -125,26 +558,26 @@
   <section class="main-card">
     <div class="section-heading">
       <div>
-        <small>DEMO DISPLAY</small>
-        <h3>Big / Small</h3>
+        <small>LIVE CLASSIFICATION</small>
+        <h3>Big / Small Status</h3>
       </div>
       <span class="demo-tag">SIMULATION</span>
     </div>
 
     <div class="demo-bs">
-      <div class="bs-tile">
+      <div id="bigTile" class="bs-tile">
         <h3>BIG</h3>
         <strong>5–9</strong>
       </div>
 
-      <div class="bs-tile">
+      <div id="smallTile" class="bs-tile">
         <h3>SMALL</h3>
         <strong>0–4</strong>
       </div>
     </div>
 
     <p class="demo-note">
-      Demo classification only. No outcome prediction.
+      Active tile highlights automatically based on the generated sample (0–4 Small, 5–9 Big).
     </p>
   </section>
 
@@ -159,14 +592,17 @@
     </div>
 
     <div class="sample-box">
-      <span class="sample-label">SAMPLE VALUE</span>
+      <span class="sample-label">SAMPLE NUMBER &amp; SIZE</span>
 
-      <div id="sampleValue" class="sample-value">--</div>
+      <div class="result-row">
+        <div id="sampleValue" class="sample-value">--</div>
+        <div id="sampleSize" class="sample-bs-badge">BIG / SMALL</div>
+      </div>
 
       <div id="sampleTag" class="sample-tag">READY</div>
 
       <p id="sampleInfo">
-        Connected users can run a demo sample.
+        Click below to generate both Number (0–9) and Big/Small result.
       </p>
     </div>
 
@@ -210,61 +646,143 @@
   </footer>
 </main>
 
-<!-- OFFLINE SCREEN -->
-<div id="offlineScreen" class="offline-screen hidden">
-  <div class="offline-card">
-    <div class="offline-icon">⌁</div>
-    <h2>Connection Lost</h2>
-
-    <p>
-      This application requires an active internet connection
-      and an available server.
-    </p>
-
-    <button id="offlineRetry" class="main-btn">
-      TRY AGAIN
-    </button>
-  </div>
-</div>
-
-<!-- REAL TIME CLOCK / PERIOD -->
 <script>
 (function () {
   const periodEl = document.getElementById("periodNumber");
   const timerEl = document.getElementById("countdown");
+  const periodModeEl = document.getElementById("periodMode");
+
+  const connectionEl = document.getElementById("connection");
+  const serverTextEl = document.getElementById("serverText");
+  const serverDetailEl = document.getElementById("serverDetail");
+  const serverBarEl = document.getElementById("serverBar");
+  const retryBtn = document.getElementById("retryBtn");
+
+  const sampleBtn = document.getElementById("sampleBtn");
+  const sampleValueEl = document.getElementById("sampleValue");
+  const sampleSizeEl = document.getElementById("sampleSize");
+  const sampleTagEl = document.getElementById("sampleTag");
+  const sampleInfoEl = document.getElementById("sampleInfo");
+
+  const bigTile = document.getElementById("bigTile");
+  const smallTile = document.getElementById("smallTile");
+
+  const runsEl = document.getElementById("runs");
+  const historyEl = document.getElementById("history");
+  const clearBtn = document.getElementById("clearBtn");
+
+  let currentPeriod = "";
+  let runCount = 0;
+
+  // 1. Accurate Period ID calculation (UTC Standard / IST Standard / HHMM)
+  function getFormattedPeriod(now) {
+    const mode = periodModeEl.value;
+
+    if (mode === "utc_std") {
+      const y = now.getUTCFullYear();
+      const m = String(now.getUTCMonth() + 1).padStart(2, "0");
+      const d = String(now.getUTCDate()).padStart(2, "0");
+      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes() + 1;
+      return `${y}${m}${d}10001${String(totalMinutes).padStart(4, "0")}`;
+    }
+
+    if (mode === "ist_std") {
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const d = String(now.getDate()).padStart(2, "0");
+      const totalMinutes = now.getHours() * 60 + now.getMinutes() + 1;
+      return `${y}${m}${d}10001${String(totalMinutes).padStart(4, "0")}`;
+    }
+
+    // Fallback HHMM format
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, "0");
+    const d = String(now.getDate()).padStart(2, "0");
+    const h = String(now.getHours()).padStart(2, "0");
+    const min = String(now.getMinutes()).padStart(2, "0");
+    return `${y}${m}${d}${h}${min}`;
+  }
 
   function updateClock() {
     const now = new Date();
-
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const hour = String(now.getHours()).padStart(2, "0");
-    const minute = String(now.getMinutes()).padStart(2, "0");
     const second = now.getSeconds();
-
-    // Device-clock minute ID for this demo
-    const period = `${year}${month}${day}${hour}${minute}`;
-
-    // Countdown to next minute
     const remaining = 60 - second;
 
-    if (periodEl) {
-      periodEl.textContent = period;
-    }
-
-    if (timerEl) {
-      timerEl.textContent =
-        `00:${String(remaining).padStart(2, "0")}`;
-    }
+    currentPeriod = getFormattedPeriod(now);
+    periodEl.textContent = currentPeriod;
+    timerEl.textContent = `00:${String(remaining).padStart(2, "0")}`;
   }
 
+  periodModeEl.addEventListener("change", updateClock);
   updateClock();
   setInterval(updateClock, 1000);
+
+  // 2. Server connection simulation
+  function connectServer() {
+    connectionEl.classList.remove("online");
+    connectionEl.innerHTML = '<span class="dot"></span> CONNECTING';
+    serverTextEl.textContent = "Checking connection...";
+    serverDetailEl.textContent = "Syncing with simulation server";
+    serverBarEl.style.width = "35%";
+    sampleBtn.disabled = true;
+
+    setTimeout(() => {
+      connectionEl.classList.add("online");
+      connectionEl.innerHTML = '<span class="dot"></span> ONLINE';
+      serverTextEl.textContent = "Server Connected";
+      serverDetailEl.textContent = "Simulation engine ready (Low Latency)";
+      serverBarEl.style.width = "100%";
+      sampleBtn.disabled = false;
+    }, 800);
+  }
+
+  retryBtn.addEventListener("click", connectServer);
+  connectServer();
+
+  // 3. Generate Number + Big/Small simultaneously
+  function generateSample() {
+    const num = Math.floor(Math.random() * 10); // 0 to 9
+    const isBig = num >= 5;
+    const label = isBig ? "BIG" : "SMALL";
+
+    // Update main sample display
+    sampleValueEl.textContent = num;
+    sampleSizeEl.textContent = label;
+    sampleSizeEl.className = "sample-bs-badge " + (isBig ? "big" : "small");
+
+    // Highlight Big / Small tiles
+    bigTile.classList.toggle("active-big", isBig);
+    smallTile.classList.toggle("active-small", !isBig);
+
+    sampleTagEl.textContent = `PERIOD ${currentPeriod.slice(-4)}`;
+    sampleInfoEl.textContent = `Result: ${label} (${num}) generated for current period.`;
+
+    // Update Runs & History
+    runCount++;
+    runsEl.textContent = runCount;
+
+    if (historyEl.querySelector(".empty")) {
+      historyEl.innerHTML = "";
+    }
+
+    const item = document.createElement("div");
+    item.className = "history-item";
+    item.innerHTML = `
+      <span class="history-period">${currentPeriod}</span>
+      <span class="history-result ${isBig ? "big" : "small"}">${label} (${num})</span>
+    `;
+    historyEl.prepend(item);
+  }
+
+  sampleBtn.addEventListener("click", generateSample);
+
+  clearBtn.addEventListener("click", () => {
+    historyEl.innerHTML = '<div class="empty">No activity available</div>';
+    runCount = 0;
+    runsEl.textContent = "0";
+  });
 })();
 </script>
-
-<script src="app.js"></script>
 
 </body>
 </html>
