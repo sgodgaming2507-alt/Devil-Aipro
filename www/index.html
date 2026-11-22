@@ -1,799 +1,815 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#070914">
-  <title>DEVIL AI PRO</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    body {
-      background: #070914;
-      color: #e6eefc;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .app-shell {
-      width: 100%;
-      max-width: 460px;
-    }
-
-    /* TOPBAR */
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #38e5ff, #2563eb);
-      color: #050814;
-      font-weight: 900;
-      font-size: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .brand h1 {
-      font-size: 18px;
-      letter-spacing: 1px;
-    }
-
-    .brand h1 span {
-      color: #38e5ff;
-    }
-
-    .brand p {
-      font-size: 10px;
-      color: #8a96aa;
-      letter-spacing: 1.5px;
-    }
-
-    .connection {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 6px 12px;
-      border-radius: 999px;
-      background: #11182a;
-      border: 1px solid #24314b;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #fbbf24;
-    }
-
-    .connection.online {
-      color: #34d399;
-      border-color: rgba(52, 211, 153, 0.4);
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    /* WELCOME */
-    .welcome {
-      margin-bottom: 18px;
-    }
-
-    .eyebrow {
-      font-size: 11px;
-      color: #38e5ff;
-      letter-spacing: 2px;
-      font-weight: 700;
-    }
-
-    .welcome h2 {
-      font-size: 26px;
-      margin: 6px 0;
-      line-height: 1.2;
-    }
-
-    .welcome h2 span {
-      color: #38e5ff;
-    }
-
-    .welcome p {
-      font-size: 13px;
-      color: #91a3c4;
-    }
-
-    /* CARDS */
-    .server-card,
-    .period-card,
-    .main-card {
-      margin-bottom: 18px;
-      padding: 20px;
-      border: 1px solid #24314b;
-      border-radius: 18px;
-      background: linear-gradient(145deg, #11182a, #090d18);
-    }
-
-    .server-head,
-    .section-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .server-head span {
-      font-size: 11px;
-      letter-spacing: 1.5px;
-      color: #91a3c4;
-    }
-
-    .server-card h3 {
-      font-size: 17px;
-      margin-bottom: 4px;
-    }
-
-    .server-card p {
-      font-size: 12px;
-      color: #8a96aa;
-    }
-
-    .server-line {
-      height: 5px;
-      background: #1b2438;
-      border-radius: 99px;
-      overflow: hidden;
-      margin: 14px 0;
-    }
-
-    #serverBar {
-      height: 100%;
-      width: 30%;
-      background: linear-gradient(90deg, #38e5ff, #34d399);
-      transition: width 0.5s ease;
-    }
-
-    /* PERIOD CARD */
-    .period-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .period-label {
-      color: #91a3c4;
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .tz-select {
-      background: #111827;
-      color: #38e5ff;
-      border: 1px solid #29334a;
-      border-radius: 8px;
-      padding: 4px 8px;
-      font-size: 11px;
-      font-weight: 700;
-      outline: none;
-    }
-
-    .period-number {
-      font-size: 23px;
-      font-weight: 800;
-      color: #38e5ff;
-      margin: 10px 0 14px;
-      letter-spacing: 1px;
-      overflow-wrap: anywhere;
-    }
-
-    .timer-display {
-      font-size: 40px;
-      font-weight: 900;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-      margin-top: 4px;
-    }
-
-    /* BIG / SMALL TILES */
-    .demo-tag {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 8px;
-      background: rgba(56, 229, 255, 0.12);
-      color: #38e5ff;
-      border: 1px solid rgba(56, 229, 255, 0.3);
-    }
-
-    .section-heading small {
-      color: #91a3c4;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-    }
-
-    .section-heading h3 {
-      font-size: 18px;
-    }
-
-    .demo-bs {
-      display: flex;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .bs-tile {
-      flex: 1;
-      text-align: center;
-      padding: 16px 10px;
-      border-radius: 14px;
-      border: 1px solid #29334a;
-      background: #111827;
-      transition: all 0.25s ease;
-    }
-
-    .bs-tile h3 {
-      margin: 0 0 6px;
-      font-size: 14px;
-      color: #9aa9c5;
-    }
-
-    .bs-tile strong {
-      font-size: 22px;
-      color: #fff;
-    }
-
-    .bs-tile.active-big {
-      border-color: #f59e0b;
-      background: rgba(245, 158, 11, 0.16);
-      box-shadow: 0 0 18px rgba(245, 158, 11, 0.25);
-    }
-
-    .bs-tile.active-big h3,
-    .bs-tile.active-big strong {
-      color: #fbbf24;
-    }
-
-    .bs-tile.active-small {
-      border-color: #38e5ff;
-      background: rgba(56, 229, 255, 0.16);
-      box-shadow: 0 0 18px rgba(56, 229, 255, 0.25);
-    }
-
-    .bs-tile.active-small h3,
-    .bs-tile.active-small strong {
-      color: #38e5ff;
-    }
-
-    .demo-note {
-      font-size: 11px;
-      color: #8a96aa;
-      margin-top: 12px;
-    }
-
-    /* SAMPLE BOX */
-    .sample-box {
-      background: #0b101d;
-      border: 1px solid #24314b;
-      border-radius: 14px;
-      padding: 18px;
-      text-align: center;
-      margin: 14px 0;
-    }
-
-    .sample-label {
-      font-size: 11px;
-      letter-spacing: 2px;
-      color: #91a3c4;
-    }
-
-    .result-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 14px;
-      margin: 12px 0;
-    }
-
-    .sample-value {
-      font-size: 46px;
-      font-weight: 900;
-      color: #38e5ff;
-      line-height: 1;
-    }
-
-    .sample-bs-badge {
-      font-size: 22px;
-      font-weight: 900;
-      padding: 8px 16px;
-      border-radius: 12px;
-      background: #162035;
-      color: #91a3c4;
-      border: 1px solid #2b3a59;
-      letter-spacing: 1px;
-    }
-
-    .sample-bs-badge.big {
-      background: rgba(245, 158, 11, 0.18);
-      color: #fbbf24;
-      border-color: #f59e0b;
-    }
-
-    .sample-bs-badge.small {
-      background: rgba(56, 229, 255, 0.18);
-      color: #38e5ff;
-      border-color: #38e5ff;
-    }
-
-    .sample-tag {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: #172033;
-      color: #34d399;
-      margin-bottom: 8px;
-    }
-
-    #sampleInfo {
-      font-size: 12px;
-      color: #8a96aa;
-    }
-
-    /* BUTTONS */
-    .main-btn,
-    .secondary-btn {
-      width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      border: none;
-      font-weight: 800;
-      font-size: 13px;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .main-btn {
-      background: linear-gradient(135deg, #38e5ff, #2563eb);
-      color: #050814;
-    }
-
-    .main-btn:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
-
-    .secondary-btn {
-      background: #182236;
-      color: #e6eefc;
-      border: 1px solid #2b3a59;
-    }
-
-    .text-btn {
-      background: transparent;
-      border: none;
-      color: #38e5ff;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    /* STATS */
-    .stats {
-      display: flex;
-      gap: 12px;
-      margin-top: 14px;
-    }
-
-    .stat-box {
-      flex: 1;
-      background: #0b101d;
-      border: 1px solid #24314b;
-      border-radius: 12px;
-      padding: 12px;
-      text-align: center;
-    }
-
-    .stat-box small {
-      display: block;
-      font-size: 10px;
-      color: #91a3c4;
-      margin-bottom: 4px;
-    }
-
-    .stat-box strong {
-      font-size: 16px;
-      color: #fff;
-    }
-
-    /* HISTORY */
-    .history {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .history-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 12px;
-      background: #0b101d;
-      border: 1px solid #24314b;
-      border-radius: 10px;
-      font-size: 12px;
-    }
-
-    .history-period {
-      color: #91a3c4;
-      font-family: monospace;
-    }
-
-    .history-result {
-      font-weight: 800;
-    }
-
-    .history-result.big {
-      color: #fbbf24;
-    }
-
-    .history-result.small {
-      color: #38e5ff;
-    }
-
-    .empty {
-      text-align: center;
-      font-size: 12px;
-      color: #8a96aa;
-      padding: 14px 0;
-    }
-
-    footer {
-      text-align: center;
-      padding: 16px 0 24px;
-      font-size: 11px;
-      color: #70809c;
-    }
-
-    .footer-logo {
-      font-weight: 800;
-      color: #91a3c4;
-      margin-bottom: 4px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#030610">
+<title>SGod AI - Premium Core</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;
+}
+:root{
+  --cyan:#44eaff;
+  --blue:#3878ff;
+  --purple:#9a63ff;
+  --bg:#030610;
+  --card:#0a1020;
+  --muted:#7888a5;
+}
+body{
+  min-height:100vh;
+  color:#edf6ff;
+  background:
+    radial-gradient(ellipse at 50% -10%,#14264c 0%,transparent 50%),
+    radial-gradient(ellipse at 90% 50%,#100c2a 0%,transparent 45%),
+    var(--bg);
+  padding:15px;
+  overflow-x:hidden;
+}
+.app{
+  max-width:480px;
+  margin:auto;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:8px 0 26px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.logo{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  font-size:24px;
+  font-weight:1000;
+  color:#03101a;
+  background:linear-gradient(135deg,#45edff,#7963ff);
+  box-shadow:0 0 22px #44eaff45;
+}
+.brand h1{
+  font-size:18px;
+  letter-spacing:2px;
+}
+.brand h1 span{
+  color:var(--cyan);
+}
+.brand p{
+  font-size:9px;
+  color:#7486a7;
+  letter-spacing:2px;
+  margin-top:4px;
+}
+.online-pill{
+  font-size:9px;
+  color:#53e6b3;
+  padding:8px 10px;
+  border:1px solid #255747;
+  border-radius:30px;
+  background:#0a1b19;
+}
+.online-dot{
+  display:inline-block;
+  width:6px;height:6px;
+  border-radius:50%;
+  background:#53e6b3;
+  box-shadow:0 0 9px #53e6b3;
+  margin-right:5px;
+}
+.hero{
+  margin-bottom:19px;
+}
+.hero small{
+  color:var(--cyan);
+  letter-spacing:3px;
+  font-size:10px;
+}
+.hero h2{
+  font-size:30px;
+  line-height:1.22;
+  margin:9px 0;
+}
+.hero h2 span{
+  background:linear-gradient(90deg,#43eaff,#a76aff);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.hero p{
+  color:#8392ae;
+  font-size:12px;
+  line-height:1.7;
+}
+.card{
+  background:linear-gradient(145deg,#10182b,#080c17);
+  border:1px solid #202c45;
+  border-radius:20px;
+  padding:17px;
+  margin-bottom:15px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 14px 35px #0003;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  width:130px;height:130px;
+  top:-65px;right:-45px;
+  background:#3d68ff12;
+  filter:blur(45px);
+  pointer-events:none;
+}
+.card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+.card-head small{
+  font-size:10px;
+  letter-spacing:2px;
+  color:#8292ae;
+}
+.pill{
+  padding:5px 9px;
+  font-size:9px;
+  letter-spacing:1px;
+  border:1px solid #24425b;
+  background:#0b1c2c;
+  color:var(--cyan);
+  border-radius:30px;
+}
+
+/* ===== AI CORE ===== */
+
+.core-card{
+  text-align:center;
+}
+.core-wrap{
+  width:min(280px,85vw);
+  aspect-ratio:1/1;
+  margin:0 auto;
+  position:relative;
+}
+#aiCoreCanvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.core-name{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:4px;
+  margin-top:2px;
+  color:#d9faff;
+  text-shadow:0 0 12px #44eaff45;
+}
+.core-sub{
+  font-size:9px;
+  color:#7184a2;
+  letter-spacing:2px;
+  margin-top:7px;
+}
+.scan-progress{
+  height:5px;
+  border-radius:20px;
+  overflow:hidden;
+  background:#19233a;
+  margin-top:22px;
+}
+.scan-progress-fill{
+  width:0%;
+  height:100%;
+  border-radius:20px;
+  background:linear-gradient(90deg,#44eaff,#9a63ff);
+  box-shadow:0 0 12px #44eaff;
+}
+.scan-meta{
+  display:flex;
+  justify-content:space-between;
+  margin-top:9px;
+  color:#7889a7;
+  font-size:9px;
+  letter-spacing:1px;
+}
+.scan-button{
+  width:100%;
+  border:none;
+  border-radius:14px;
+  padding:16px;
+  margin-top:17px;
+  color:#020713;
+  background:linear-gradient(110deg,#36eaff,#537bff,#a264ff);
+  font-weight:900;
+  font-size:12px;
+  letter-spacing:2px;
+  box-shadow:0 0 25px #44eaff20;
+  cursor:pointer;
+  transition:transform .2s,filter .2s;
+}
+.scan-button:active{
+  transform:scale(.97);
+  filter:brightness(1.15);
+}
+.scan-button:disabled{
+  opacity:.65;
+  cursor:default;
+}
+.scanning .core-wrap{
+  filter:drop-shadow(0 0 18px #44eaff30);
+}
+.scanning .core-name{
+  color:#69edff;
+}
+.scanning .pill{
+  color:#b48aff;
+  border-color:#6944a5;
+  background:#201532;
+}
+
+/* ===== CLOCK ===== */
+
+.clock-box{
+  border:1px solid #1e2b45;
+  border-radius:15px;
+  background:#070d1a;
+  padding:16px;
+}
+.clock-label{
+  font-size:9px;
+  color:#7d8eaa;
+  letter-spacing:2px;
+}
+.clock-time{
+  font-size:27px;
+  font-weight:900;
+  color:var(--cyan);
+  letter-spacing:2px;
+  margin:10px 0 17px;
+  font-variant-numeric:tabular-nums;
+  text-shadow:0 0 16px #44eaff20;
+}
+.timer{
+  font-size:37px;
+  font-weight:900;
+  color:#f1f6ff;
+  letter-spacing:2px;
+  font-variant-numeric:tabular-nums;
+}
+
+/* ===== MONITOR ===== */
+
+.monitor-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.monitor-box{
+  border:1px solid #1d2941;
+  background:#080d19;
+  border-radius:13px;
+  padding:13px;
+}
+.monitor-box small{
+  display:block;
+  color:#7888a5;
+  font-size:9px;
+  letter-spacing:1.5px;
+  margin-bottom:8px;
+}
+.monitor-box strong{
+  font-size:14px;
+  color:#dceaff;
+}
+.cyan{color:#44eaff!important}
+.purple{color:#b28aff!important}
+.green{color:#51e4b4!important}
+
+/* ===== TERMINAL ===== */
+
+.log-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.log-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  background:#080d19;
+  border:1px solid #1d2941;
+  border-radius:11px;
+  padding:11px;
+  color:#93a3bf;
+  font-size:10px;
+}
+.log-dot{
+  width:6px;height:6px;
+  background:var(--cyan);
+  border-radius:50%;
+  box-shadow:0 0 8px var(--cyan);
+  flex-shrink:0;
+}
+.log-time{
+  margin-left:auto;
+  font-size:9px;
+  color:#53617e;
+}
+.clear-btn{
+  border:none;
+  background:none;
+  color:var(--cyan);
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1px;
+  cursor:pointer;
+}
+footer{
+  text-align:center;
+  color:#53617e;
+  font-size:10px;
+  line-height:1.8;
+  padding:18px 5px 25px;
+}
+footer b{
+  letter-spacing:2px;
+  color:#8b9bb8;
+}
+
+/* ===== MOTION ===== */
+
+@keyframes glowPulse{
+  0%,100%{opacity:.75}
+  50%{opacity:1}
+}
+@media(max-width:360px){
+  body{padding:11px}
+  .hero h2{font-size:27px}
+}
+@media(prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important}
+}
+</style>
 </head>
 
 <body>
-<main class="app-shell">
+<main class="app">
 
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">D</div>
-      <div>
-        <h1>DEVIL <span>AI PRO</span></h1>
-        <p>PRIVATE ONLINE LAB</p>
-      </div>
+<!-- HEADER -->
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">S</div>
+    <div>
+      <h1>SGod <span>AI</span></h1>
+      <p>NEURAL INTERFACE V3.0</p>
+    </div>
+  </div>
+  <div class="online-pill">
+    <span class="online-dot"></span> SYSTEM ONLINE
+  </div>
+</header>
+
+<!-- WELCOME -->
+<section class="hero">
+  <small>◈ NEXT GENERATION INTERFACE</small>
+  <h2>Welcome to<br><span>SGod Intelligence</span></h2>
+  <p>Advanced visual simulation interface.<br>
+  Experience the next generation of AI animation.</p>
+</section>
+
+<!-- AI CORE -->
+<section class="card core-card" id="coreCard">
+  <div class="card-head">
+    <small>NEURAL CORE</small>
+    <span class="pill" id="statePill">READY</span>
+  </div>
+
+  <div class="core-wrap" id="coreWrap">
+    <canvas id="aiCoreCanvas"></canvas>
+  </div>
+
+  <div class="core-name" id="coreName">SGOD AI CORE</div>
+  <div class="core-sub" id="coreSub">SYSTEM STANDBY</div>
+
+  <div class="scan-progress">
+    <div class="scan-progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="scan-meta">
+    <span id="scanText">WAITING FOR COMMAND</span>
+    <span id="scanPercent">0%</span>
+  </div>
+
+  <button class="scan-button" id="scanBtn">
+    ✦ &nbsp; START AI SCAN
+  </button>
+</section>
+
+<!-- LIVE CLOCK -->
+<section class="card">
+  <div class="card-head">
+    <small>LIVE TIME SYSTEM</small>
+    <span class="pill">REAL TIME</span>
+  </div>
+
+  <div class="clock-box">
+    <div class="clock-label">LOCAL CLOCK</div>
+    <div class="clock-time" id="clock">00:00:00</div>
+
+    <div class="clock-label">NEXT MINUTE IN</div>
+    <div class="timer" id="timer">00:00</div>
+  </div>
+</section>
+
+<!-- MONITOR -->
+<section class="card">
+  <div class="card-head">
+    <small>SYSTEM MONITOR</small>
+    <span class="pill">MONITORING</span>
+  </div>
+
+  <div class="monitor-grid">
+    <div class="monitor-box">
+      <small>CORE STATUS</small>
+      <strong class="cyan" id="coreStatus">STANDBY</strong>
     </div>
 
-    <div id="connection" class="connection">
-      <span class="dot"></span> CONNECTING
-    </div>
-  </header>
-
-  <section class="welcome">
-    <span class="eyebrow">PRIVATE CLOUD SYSTEM</span>
-    <h2>Welcome to<br><span>AI Laboratory</span></h2>
-    <p>Secure online dashboard and statistical simulation environment.</p>
-  </section>
-
-  <section class="server-card">
-    <div class="server-head">
-      <span>SERVER STATUS</span>
-      <span class="server-icon">◈</span>
+    <div class="monitor-box">
+      <small>SCAN SESSION</small>
+      <strong class="purple" id="scanCount">00</strong>
     </div>
 
-    <h3 id="serverText">Checking connection...</h3>
-    <p id="serverDetail">Connecting to remote service</p>
-
-    <div class="server-line">
-      <div id="serverBar"></div>
+    <div class="monitor-box">
+      <small>ENGINE</small>
+      <strong>SG-V3</strong>
     </div>
 
-    <button id="retryBtn" class="secondary-btn">RECONNECT</button>
-  </section>
-
-  <!-- REAL TIME PERIOD -->
-  <section class="period-card">
-    <div class="period-header">
-      <div class="period-label">LIVE PERIOD ID (1 MIN)</div>
-      <select id="periodMode" class="tz-select" title="Select Period Format">
-        <option value="utc_std">UTC Standard (10001+)</option>
-        <option value="ist_std">IST Standard (10001+)</option>
-        <option value="hhmm">Date + HHMM</option>
-      </select>
+    <div class="monitor-box">
+      <small>INTERFACE</small>
+      <strong class="green">ACTIVE</strong>
     </div>
+  </div>
+</section>
 
-    <div id="periodNumber" class="period-number">
-      Loading...
+<!-- ACTIVITY -->
+<section class="card">
+  <div class="card-head">
+    <small>ACTIVITY TERMINAL</small>
+    <button class="clear-btn" id="clearBtn">CLEAR LOG</button>
+  </div>
+
+  <div class="log-list" id="logs">
+    <div class="log-row">
+      <span class="log-dot"></span>
+      <span>System initialized</span>
+      <span class="log-time">READY</span>
     </div>
-
-    <div class="period-label">NEXT MINUTE IN</div>
-
-    <div id="countdown" class="timer-display">
-      00:60
+    <div class="log-row">
+      <span class="log-dot"></span>
+      <span>Neural interface loaded</span>
+      <span class="log-time">OK</span>
     </div>
+  </div>
+</section>
 
-    <p class="demo-note">
-      Switch period format above if your platform uses UTC or IST counter.
-    </p>
-  </section>
+<footer>
+  <b>SGOD AI • NEON EDITION</b><br>
+  Visual simulation only · No real-world predictions
+</footer>
 
-  <!-- BIG / SMALL DEMO DISPLAY -->
-  <section class="main-card">
-    <div class="section-heading">
-      <div>
-        <small>LIVE CLASSIFICATION</small>
-        <h3>Big / Small Status</h3>
-      </div>
-      <span class="demo-tag">SIMULATION</span>
-    </div>
-
-    <div class="demo-bs">
-      <div id="bigTile" class="bs-tile">
-        <h3>BIG</h3>
-        <strong>5–9</strong>
-      </div>
-
-      <div id="smallTile" class="bs-tile">
-        <h3>SMALL</h3>
-        <strong>0–4</strong>
-      </div>
-    </div>
-
-    <p class="demo-note">
-      Active tile highlights automatically based on the generated sample (0–4 Small, 5–9 Big).
-    </p>
-  </section>
-
-  <!-- RANDOM DATA LAB -->
-  <section class="main-card">
-    <div class="section-heading">
-      <div>
-        <small>DEMO ENVIRONMENT</small>
-        <h3>Random Data Lab</h3>
-      </div>
-      <span class="demo-tag">SIMULATION</span>
-    </div>
-
-    <div class="sample-box">
-      <span class="sample-label">SAMPLE NUMBER &amp; SIZE</span>
-
-      <div class="result-row">
-        <div id="sampleValue" class="sample-value">--</div>
-        <div id="sampleSize" class="sample-bs-badge">BIG / SMALL</div>
-      </div>
-
-      <div id="sampleTag" class="sample-tag">READY</div>
-
-      <p id="sampleInfo">
-        Click below to generate both Number (0–9) and Big/Small result.
-      </p>
-    </div>
-
-    <button id="sampleBtn" class="main-btn" disabled>
-      GENERATE SAMPLE
-    </button>
-
-    <div class="stats">
-      <div class="stat-box">
-        <small>RUNS</small>
-        <strong id="runs">0</strong>
-      </div>
-
-      <div class="stat-box">
-        <small>SESSION</small>
-        <strong id="session">ACTIVE</strong>
-      </div>
-    </div>
-  </section>
-
-  <!-- ACTIVITY -->
-  <section class="main-card">
-    <div class="section-heading">
-      <div>
-        <small>ACTIVITY</small>
-        <h3>Recent Sessions</h3>
-      </div>
-
-      <button id="clearBtn" class="text-btn">CLEAR</button>
-    </div>
-
-    <div id="history" class="history">
-      <div class="empty">No activity available</div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="footer-logo">DEVIL AI PRO</div>
-    <p>Online Demo • Educational Simulation</p>
-    <p>Random samples are not forecasts or guarantees.</p>
-  </footer>
 </main>
 
 <script>
-(function () {
-  const periodEl = document.getElementById("periodNumber");
-  const timerEl = document.getElementById("countdown");
-  const periodModeEl = document.getElementById("periodMode");
+(() => {
+"use strict";
 
-  const connectionEl = document.getElementById("connection");
-  const serverTextEl = document.getElementById("serverText");
-  const serverDetailEl = document.getElementById("serverDetail");
-  const serverBarEl = document.getElementById("serverBar");
-  const retryBtn = document.getElementById("retryBtn");
+const $ = id => document.getElementById(id);
 
-  const sampleBtn = document.getElementById("sampleBtn");
-  const sampleValueEl = document.getElementById("sampleValue");
-  const sampleSizeEl = document.getElementById("sampleSize");
-  const sampleTagEl = document.getElementById("sampleTag");
-  const sampleInfoEl = document.getElementById("sampleInfo");
+const canvas = $("aiCoreCanvas");
+const wrap = $("coreWrap");
+const ctx = canvas.getContext("2d");
 
-  const bigTile = document.getElementById("bigTile");
-  const smallTile = document.getElementById("smallTile");
+const coreCard = $("coreCard");
+const scanBtn = $("scanBtn");
+const statePill = $("statePill");
+const coreName = $("coreName");
+const coreSub = $("coreSub");
+const scanText = $("scanText");
+const scanPercent = $("scanPercent");
+const progressFill = $("progressFill");
+const coreStatus = $("coreStatus");
+const scanCount = $("scanCount");
+const logs = $("logs");
 
-  const runsEl = document.getElementById("runs");
-  const historyEl = document.getElementById("history");
-  const clearBtn = document.getElementById("clearBtn");
+let width = 0;
+let height = 0;
+let dpr = 1;
+let frame = 0;
+let particles = [];
+let scanning = false;
+let scanStart = 0;
+let scanTotal = 4000;
+let totalScans = 0;
+let lastTime = 0;
 
-  let currentPeriod = "";
-  let runCount = 0;
-  const lockedResultsByPeriod = {};
+/* Resize canvas */
+function resize(){
+  const rect = wrap.getBoundingClientRect();
+  width = rect.width;
+  height = rect.height;
+  dpr = Math.min(window.devicePixelRatio || 1, 1.5);
 
-  function getFormattedPeriod(now) {
-    const mode = periodModeEl.value;
+  canvas.width = Math.round(width*dpr);
+  canvas.height = Math.round(height*dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
 
-    if (mode === "utc_std") {
-      const y = now.getUTCFullYear();
-      const m = String(now.getUTCMonth() + 1).padStart(2, "0");
-      const d = String(now.getUTCDate()).padStart(2, "0");
-      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes() + 1;
-      return `${y}${m}${d}10001${String(totalMinutes).padStart(4, "0")}`;
-    }
+  particles = Array.from({length:100},(_,i)=>({
+    angle:Math.random()*Math.PI*2,
+    radius:45+Math.random()*82,
+    speed:(.001+Math.random()*.004)*(i%2===0?1:-1),
+    size:.5+Math.random()*1.5,
+    alpha:.2+Math.random()*.7
+  }));
+}
+window.addEventListener("resize",resize);
 
-    if (mode === "ist_std") {
-      const y = now.getFullYear();
-      const m = String(now.getMonth() + 1).padStart(2, "0");
-      const d = String(now.getDate()).padStart(2, "0");
-      const totalMinutes = now.getHours() * 60 + now.getMinutes() + 1;
-      return `${y}${m}${d}10001${String(totalMinutes).padStart(4, "0")}`;
-    }
+/* Helpers */
+function ellipse(cx,cy,rx,ry,angle,color,lineWidth=1){
+  ctx.save();
+  ctx.translate(cx,cy);
+  ctx.rotate(angle);
+  ctx.beginPath();
+  ctx.ellipse(0,0,rx,ry,0,0,Math.PI*2);
+  ctx.strokeStyle=color;
+  ctx.lineWidth=lineWidth;
+  ctx.stroke();
+  ctx.restore();
+}
 
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2, "0");
-    const d = String(now.getDate()).padStart(2, "0");
-    const h = String(now.getHours()).padStart(2, "0");
-    const min = String(now.getMinutes()).padStart(2, "0");
-    return `${y}${m}${d}${h}${min}`;
+function circle(x,y,r,color){
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fillStyle=color;
+  ctx.fill();
+}
+
+function drawCore(timestamp){
+  frame++;
+  const dt = lastTime ? Math.min(timestamp-lastTime,40) : 16;
+  lastTime = timestamp;
+
+  const active = scanning;
+  const speed = active ? 2.6 : 1;
+  const cx = width/2;
+  const cy = height/2;
+  const pulse = 1+Math.sin(frame*.035)*.035;
+
+  ctx.clearRect(0,0,width,height);
+
+  /* Ambient background glow */
+  const ambient=ctx.createRadialGradient(cx,cy,5,cx,cy,width*.46);
+  ambient.addColorStop(0,"rgba(35,210,255,.13)");
+  ambient.addColorStop(.5,"rgba(95,60,255,.045)");
+  ambient.addColorStop(1,"transparent");
+  ctx.fillStyle=ambient;
+  ctx.fillRect(0,0,width,height);
+
+  /* Orbital geometry */
+  ellipse(cx,cy,108,34,frame*.012*speed,"rgba(60,225,255,.40)");
+  ellipse(cx,cy,92,30,-frame*.019*speed,"rgba(160,90,255,.55)");
+  ellipse(cx,cy,118,43,frame*.007*speed,"rgba(255,255,255,.15)");
+  ellipse(cx,cy,79,26,-frame*.026*speed,"rgba(60,225,255,.6)");
+
+  /* Orbit nodes */
+  for(let i=0;i<7;i++){
+    const a=frame*.016*speed+i*(Math.PI*2/7);
+    const x=cx+Math.cos(a)*105;
+    const y=cy+Math.sin(a)*33;
+
+    ctx.save();
+    ctx.shadowBlur=12;
+    ctx.shadowColor=i%2?"#a56aff":"#44eaff";
+    circle(x,y,i%3===0?3:2,i%2?"#a56aff":"#44eaff");
+    ctx.restore();
   }
 
-  function updateClock() {
-    const now = new Date();
-    const second = now.getSeconds();
-    const remaining = 60 - second;
+  /* Floating particles */
+  particles.forEach(p=>{
+    p.angle+=p.speed*speed*dt;
+    const x=cx+Math.cos(p.angle)*p.radius;
+    const y=cy+Math.sin(p.angle)*p.radius*.7;
 
-    currentPeriod = getFormattedPeriod(now);
-    periodEl.textContent = currentPeriod;
-    timerEl.textContent = `00:${String(remaining).padStart(2, "0")}`;
-  }
-
-  periodModeEl.addEventListener("change", updateClock);
-  updateClock();
-  setInterval(updateClock, 1000);
-
-  function connectServer() {
-    connectionEl.classList.remove("online");
-    connectionEl.innerHTML = '<span class="dot"></span> CONNECTING';
-    serverTextEl.textContent = "Checking connection...";
-    serverDetailEl.textContent = "Syncing with simulation server";
-    serverBarEl.style.width = "35%";
-    sampleBtn.disabled = true;
-
-    setTimeout(() => {
-      connectionEl.classList.add("online");
-      connectionEl.innerHTML = '<span class="dot"></span> ONLINE';
-      serverTextEl.textContent = "Server Connected";
-      serverDetailEl.textContent = "Simulation engine ready (Low Latency)";
-      serverBarEl.style.width = "100%";
-      sampleBtn.disabled = false;
-    }, 800);
-  }
-
-  retryBtn.addEventListener("click", connectServer);
-  connectServer();
-
-  function applyResultToUI(periodId, num, fromCache) {
-    const isBig = num >= 5;
-    const label = isBig ? "BIG" : "SMALL";
-
-    sampleValueEl.textContent = num;
-    sampleSizeEl.textContent = label;
-    sampleSizeEl.className = "sample-bs-badge " + (isBig ? "big" : "small");
-
-    bigTile.classList.toggle("active-big", isBig);
-    smallTile.classList.toggle("active-small", !isBig);
-
-    sampleTagEl.textContent = fromCache
-      ? `LOCKED • PERIOD ${periodId.slice(-4)}`
-      : `PERIOD ${periodId.slice(-4)}`;
-
-    sampleInfoEl.textContent = fromCache
-      ? `Is period (${periodId.slice(-4)}) ka result pehle se lock hai: ${label} (${num}).`
-      : `Result: ${label} (${num}) generated for current period.`;
-  }
-
-  function generateSample() {
-    if (!currentPeriod) return;
-
-    if (Object.prototype.hasOwnProperty.call(lockedResultsByPeriod, currentPeriod)) {
-      applyResultToUI(currentPeriod, lockedResultsByPeriod[currentPeriod], true);
-      return;
-    }
-
-    const num = Math.floor(Math.random() * 10);
-    lockedResultsByPeriod[currentPeriod] = num;
-
-    applyResultToUI(currentPeriod, num, false);
-
-    const isBig = num >= 5;
-    const label = isBig ? "BIG" : "SMALL";
-
-    runCount++;
-    runsEl.textContent = runCount;
-
-    if (historyEl.querySelector(".empty")) {
-      historyEl.innerHTML = "";
-    }
-
-    const item = document.createElement("div");
-    item.className = "history-item";
-    item.innerHTML = `
-      <span class="history-period">${currentPeriod}</span>
-      <span class="history-result ${isBig ? "big" : "small"}">${label} (${num})</span>
-    `;
-    historyEl.prepend(item);
-  }
-
-  sampleBtn.addEventListener("click", generateSample);
-
-  clearBtn.addEventListener("click", () => {
-    historyEl.innerHTML = '<div class="empty">No activity available</div>';
-    runCount = 0;
-    runsEl.textContent = "0";
+    ctx.save();
+    ctx.globalAlpha=p.alpha;
+    ctx.shadowBlur=9;
+    ctx.shadowColor="#44eaff";
+    circle(x,y,p.size,"#8cefff");
+    ctx.restore();
   });
+
+  /* Core sphere */
+  const r=45*pulse*(active?1.07:1);
+  const sphere=ctx.createRadialGradient(
+    cx-r*.35,cy-r*.4,2,
+    cx,cy,r
+  );
+  sphere.addColorStop(0,"#eaffff");
+  sphere.addColorStop(.12,"#b1faff");
+  sphere.addColorStop(.28,"#55eaff");
+  sphere.addColorStop(.52,"#218bdc");
+  sphere.addColorStop(.76,"#273b99");
+  sphere.addColorStop(.93,"#171a4b");
+  sphere.addColorStop(1,"#090d20");
+
+  ctx.save();
+  ctx.shadowBlur=active?40:24;
+  ctx.shadowColor=active?"#43eaff":"#257bff";
+  circle(cx,cy,r,sphere);
+  ctx.restore();
+
+  /* Clip energy bands inside orb */
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.clip();
+
+  for(let i=0;i<6;i++){
+    const bandY=cy-r+i*r*.4+Math.sin(frame*.03+i)*5;
+    ctx.beginPath();
+    ctx.ellipse(cx,bandY,r*1.08,4+Math.sin(frame*.04+i)*3,0,0,Math.PI*2);
+    ctx.strokeStyle=i%2?"rgba(140,115,255,.35)":"rgba(130,245,255,.38)";
+    ctx.lineWidth=1.3;
+    ctx.stroke();
+  }
+
+  /* Moving reflection */
+  const sweep=(Math.sin(frame*.025*speed)+1)/2;
+  const sx=cx-r+sweep*r*2;
+  const reflection=ctx.createLinearGradient(sx-20,cy-r,sx+20,cy+r);
+  reflection.addColorStop(0,"transparent");
+  reflection.addColorStop(.5,"rgba(220,255,255,.3)");
+  reflection.addColorStop(1,"transparent");
+  ctx.fillStyle=reflection;
+  ctx.fillRect(cx-r,cy-r,r*2,r*2);
+
+  ctx.restore();
+
+  /* Scan sweep and spark effects */
+  if(active){
+    const sweepY=cy-r+((frame*3)% (r*2));
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.clip();
+
+    const scanGrad=ctx.createLinearGradient(cx-r,sweepY-12,cx+r,sweepY+12);
+    scanGrad.addColorStop(0,"transparent");
+    scanGrad.addColorStop(.5,"rgba(100,245,255,.7)");
+    scanGrad.addColorStop(1,"transparent");
+    ctx.fillStyle=scanGrad;
+    ctx.fillRect(cx-r,cy-r,r*2,r*2);
+    ctx.restore();
+
+    for(let i=0;i<4;i++){
+      const a=frame*.07+i*1.57;
+      const rr=r+9+Math.sin(frame*.1+i)*5;
+      const x=cx+Math.cos(a)*rr;
+      const y=cy+Math.sin(a)*rr;
+      ctx.save();
+      ctx.shadowBlur=14;
+      ctx.shadowColor="#44eaff";
+      circle(x,y,1.5+Math.sin(frame*.1+i),"#b8faff");
+      ctx.restore();
+    }
+  }
+
+  /* Update scan progress */
+  if(scanning){
+    const elapsed=timestamp-scanStart;
+    const pct=Math.min(elapsed/scanTotal,1);
+    const val=Math.round(pct*100);
+    progressFill.style.width=val+"%";
+    scanPercent.textContent=val+"%";
+
+    const messages=[
+      "INITIALIZING CORE...",
+      "LOADING VISUAL MODULES...",
+      "RUNNING SIMULATION...",
+      "FINALIZING SEQUENCE..."
+    ];
+    scanText.textContent=messages[Math.min(3,Math.floor(pct*4))];
+
+    if(pct>=1) finishScan();
+  }
+
+  requestAnimationFrame(drawCore);
+}
+
+/* Start visual scan */
+function startScan(){
+  if(scanning)return;
+
+  scanning=true;
+  scanStart=performance.now();
+
+  coreCard.classList.add("scanning");
+  scanBtn.disabled=true;
+  scanBtn.textContent="◈  SCANNING IN PROGRESS";
+
+  statePill.textContent="SCANNING";
+  coreName.textContent="SGOD AI ACTIVE";
+  coreSub.textContent="VISUAL SEQUENCE IN PROGRESS";
+  scanText.textContent="INITIALIZING...";
+  scanPercent.textContent="0%";
+  progressFill.style.width="0%";
+  coreStatus.textContent="SCANNING";
+
+  addLog("Visual scan initialized","RUN");
+}
+
+/* Finish */
+function finishScan(){
+  scanning=false;
+  coreCard.classList.remove("scanning");
+
+  statePill.textContent="COMPLETE";
+  coreName.textContent="SGOD AI CORE";
+  coreSub.textContent="DEMO SEQUENCE COMPLETE";
+  scanText.textContent="SCAN COMPLETED";
+  scanPercent.textContent="100%";
+  progressFill.style.width="100%";
+  coreStatus.textContent="READY";
+
+  totalScans++;
+  scanCount.textContent=String(totalScans).padStart(2,"0");
+
+  scanBtn.disabled=false;
+  scanBtn.textContent="✦  RUN NEW SCAN";
+
+  addLog("Visual sequence completed","DONE");
+}
+
+/* Activity terminal */
+function addLog(message,tag){
+  const row=document.createElement("div");
+  row.className="log-row";
+
+  const dot=document.createElement("span");
+  dot.className="log-dot";
+
+  const msg=document.createElement("span");
+  msg.textContent=message;
+
+  const time=document.createElement("span");
+  time.className="log-time";
+  time.textContent=tag;
+
+  row.append(dot,msg,time);
+  logs.prepend(row);
+
+  while(logs.children.length>8){
+    logs.removeChild(logs.lastElementChild);
+  }
+}
+
+/* Clock */
+function updateClock(){
+  const now=new Date();
+
+  $("clock").textContent=now.toLocaleTimeString("en-IN",{
+    hour12:false
+  });
+
+  const remaining=60-now.getSeconds();
+  $("timer").textContent="00:"+String(remaining).padStart(2,"0");
+}
+
+/* Buttons */
+scanBtn.addEventListener("click",startScan);
+
+$("clearBtn").addEventListener("click",()=>{
+  logs.replaceChildren();
+  addLog("Terminal cleared","READY");
+});
+
+/* Start */
+resize();
+updateClock();
+setInterval(updateClock,1000);
+requestAnimationFrame(drawCore);
+
 })();
 </script>
-
 </body>
 </html>
