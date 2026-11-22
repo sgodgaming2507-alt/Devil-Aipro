@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,13 +32,15 @@ body{
   overflow-x:hidden;
 }
 .app{
-  max-width:480px;
+  width:100%;
+  max-width:520px;
   margin:auto;
 }
 .topbar{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:10px;
   margin:8px 0 26px;
 }
 .brand{
@@ -54,10 +55,11 @@ body{
   place-items:center;
   border-radius:14px;
   font-size:24px;
-  font-weight:1000;
+  font-weight:900;
   color:#03101a;
   background:linear-gradient(135deg,#45edff,#7963ff);
   box-shadow:0 0 22px #44eaff45;
+  flex-shrink:0;
 }
 .brand h1{
   font-size:18px;
@@ -79,6 +81,7 @@ body{
   border:1px solid #255747;
   border-radius:30px;
   background:#0a1b19;
+  white-space:nowrap;
 }
 .online-dot{
   display:inline-block;
@@ -97,7 +100,7 @@ body{
   font-size:10px;
 }
 .hero h2{
-  font-size:30px;
+  font-size:clamp(26px, 6vw, 32px);
   line-height:1.22;
   margin:9px 0;
 }
@@ -157,7 +160,7 @@ body{
   text-align:center;
 }
 .core-wrap{
-  width:min(280px,85vw);
+  width:min(280px,78vw);
   aspect-ratio:1/1;
   margin:0 auto;
   position:relative;
@@ -167,11 +170,50 @@ body{
   height:100%;
   display:block;
 }
+.core-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  text-align:center;
+}
+.core-badge{
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:3px;
+  padding:3px 10px;
+  border-radius:20px;
+  background:rgba(3,6,16,0.72);
+  border:1px solid rgba(68,234,255,0.45);
+  color:#7cf3ff;
+  margin-bottom:4px;
+}
+.core-badge.big{
+  color:#51e4b4;
+  border-color:rgba(81,228,180,0.65);
+  box-shadow:0 0 12px rgba(81,228,180,0.25);
+}
+.core-badge.small{
+  color:#ff86b8;
+  border-color:rgba(255,134,184,0.65);
+  box-shadow:0 0 12px rgba(255,134,184,0.25);
+}
+.core-number{
+  font-size:34px;
+  font-weight:900;
+  line-height:1.05;
+  color:#ffffff;
+  text-shadow:0 0 16px rgba(68,234,255,0.85), 0 2px 8px rgba(0,0,0,0.9);
+  font-variant-numeric:tabular-nums;
+}
 .core-name{
   font-size:11px;
   font-weight:900;
   letter-spacing:4px;
-  margin-top:2px;
+  margin-top:4px;
   color:#d9faff;
   text-shadow:0 0 12px #44eaff45;
 }
@@ -202,6 +244,7 @@ body{
   color:#7889a7;
   font-size:9px;
   letter-spacing:1px;
+  font-variant-numeric:tabular-nums;
 }
 .scan-button{
   width:100%;
@@ -291,10 +334,12 @@ body{
 .monitor-box strong{
   font-size:14px;
   color:#dceaff;
+  font-variant-numeric:tabular-nums;
 }
 .cyan{color:#44eaff!important}
 .purple{color:#b28aff!important}
 .green{color:#51e4b4!important}
+.pink{color:#ff86b8!important}
 
 /* ===== TERMINAL ===== */
 
@@ -347,15 +392,9 @@ footer b{
   color:#8b9bb8;
 }
 
-/* ===== MOTION ===== */
-
-@keyframes glowPulse{
-  0%,100%{opacity:.75}
-  50%{opacity:1}
-}
 @media(max-width:360px){
   body{padding:11px}
-  .hero h2{font-size:27px}
+  .hero h2{font-size:25px}
 }
 @media(prefers-reduced-motion:reduce){
   *{scroll-behavior:auto!important}
@@ -397,10 +436,14 @@ footer b{
 
   <div class="core-wrap" id="coreWrap">
     <canvas id="aiCoreCanvas"></canvas>
+    <div class="core-overlay">
+      <div class="core-badge" id="coreBadge">IDLE</div>
+      <div class="core-number" id="coreNumber">--</div>
+    </div>
   </div>
 
   <div class="core-name" id="coreName">SGOD AI CORE</div>
-  <div class="core-sub" id="coreSub">SYSTEM STANDBY</div>
+  <div class="core-sub" id="coreSub">PRESS SCAN FOR NUMBER &amp; SIZE</div>
 
   <div class="scan-progress">
     <div class="scan-progress-fill" id="progressFill"></div>
@@ -441,8 +484,8 @@ footer b{
 
   <div class="monitor-grid">
     <div class="monitor-box">
-      <small>CORE STATUS</small>
-      <strong class="cyan" id="coreStatus">STANDBY</strong>
+      <small>LAST NUMBER &amp; SIZE</small>
+      <strong class="cyan" id="lastResult">--</strong>
     </div>
 
     <div class="monitor-box">
@@ -485,7 +528,7 @@ footer b{
 
 <footer>
   <b>SGOD AI • NEON EDITION</b><br>
-  Visual simulation only · No real-world predictions
+  Visual simulation only · Random demo numbers (00–99)
 </footer>
 
 </main>
@@ -503,48 +546,51 @@ const ctx = canvas.getContext("2d");
 const coreCard = $("coreCard");
 const scanBtn = $("scanBtn");
 const statePill = $("statePill");
+const coreBadge = $("coreBadge");
+const coreNumber = $("coreNumber");
 const coreName = $("coreName");
 const coreSub = $("coreSub");
 const scanText = $("scanText");
 const scanPercent = $("scanPercent");
 const progressFill = $("progressFill");
-const coreStatus = $("coreStatus");
+const lastResult = $("lastResult");
 const scanCount = $("scanCount");
 const logs = $("logs");
 
 let width = 0;
 let height = 0;
+let scale = 1;
 let dpr = 1;
 let frame = 0;
 let particles = [];
 let scanning = false;
 let scanStart = 0;
-let scanTotal = 4000;
+let scanTotal = 3000;
 let totalScans = 0;
 let lastTime = 0;
+let currentNumber = null;
 
-/* Resize canvas */
 function resize(){
   const rect = wrap.getBoundingClientRect();
-  width = rect.width;
-  height = rect.height;
-  dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  width = Math.max(180, rect.width || 280);
+  height = Math.max(180, rect.height || 280);
+  scale = Math.min(width, height) / 280;
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  canvas.width = Math.round(width*dpr);
-  canvas.height = Math.round(height*dpr);
-  ctx.setTransform(dpr,0,0,dpr,0,0);
+  canvas.width = Math.round(width * dpr);
+  canvas.height = Math.round(height * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  particles = Array.from({length:100},(_,i)=>({
+  particles = Array.from({length:90},(_,i)=>({
     angle:Math.random()*Math.PI*2,
-    radius:45+Math.random()*82,
+    radius:(42+Math.random()*72)*scale,
     speed:(.001+Math.random()*.004)*(i%2===0?1:-1),
-    size:.5+Math.random()*1.5,
-    alpha:.2+Math.random()*.7
+    size:(.6+Math.random()*1.4)*scale,
+    alpha:.25+Math.random()*.65
   }));
 }
 window.addEventListener("resize",resize);
 
-/* Helpers */
 function ellipse(cx,cy,rx,ry,angle,color,lineWidth=1){
   ctx.save();
   ctx.translate(cx,cy);
@@ -570,41 +616,37 @@ function drawCore(timestamp){
   lastTime = timestamp;
 
   const active = scanning;
-  const speed = active ? 2.6 : 1;
+  const speed = active ? 2.8 : 1.1;
   const cx = width/2;
   const cy = height/2;
-  const pulse = 1+Math.sin(frame*.035)*.035;
+  const pulse = 1+Math.sin(frame*.045)*.04;
 
   ctx.clearRect(0,0,width,height);
 
-  /* Ambient background glow */
-  const ambient=ctx.createRadialGradient(cx,cy,5,cx,cy,width*.46);
-  ambient.addColorStop(0,"rgba(35,210,255,.13)");
-  ambient.addColorStop(.5,"rgba(95,60,255,.045)");
+  const ambient=ctx.createRadialGradient(cx,cy,4,cx,cy,width*.46);
+  ambient.addColorStop(0,"rgba(35,210,255,.15)");
+  ambient.addColorStop(.5,"rgba(95,60,255,.05)");
   ambient.addColorStop(1,"transparent");
   ctx.fillStyle=ambient;
   ctx.fillRect(0,0,width,height);
 
-  /* Orbital geometry */
-  ellipse(cx,cy,108,34,frame*.012*speed,"rgba(60,225,255,.40)");
-  ellipse(cx,cy,92,30,-frame*.019*speed,"rgba(160,90,255,.55)");
-  ellipse(cx,cy,118,43,frame*.007*speed,"rgba(255,255,255,.15)");
-  ellipse(cx,cy,79,26,-frame*.026*speed,"rgba(60,225,255,.6)");
+  ellipse(cx,cy,102*scale,32*scale,frame*.012*speed,"rgba(60,225,255,.42)");
+  ellipse(cx,cy,88*scale,28*scale,-frame*.019*speed,"rgba(160,90,255,.58)");
+  ellipse(cx,cy,112*scale,40*scale,frame*.007*speed,"rgba(255,255,255,.16)");
+  ellipse(cx,cy,75*scale,25*scale,-frame*.026*speed,"rgba(60,225,255,.65)");
 
-  /* Orbit nodes */
   for(let i=0;i<7;i++){
     const a=frame*.016*speed+i*(Math.PI*2/7);
-    const x=cx+Math.cos(a)*105;
-    const y=cy+Math.sin(a)*33;
+    const x=cx+Math.cos(a)*100*scale;
+    const y=cy+Math.sin(a)*31*scale;
 
     ctx.save();
-    ctx.shadowBlur=12;
+    ctx.shadowBlur=12*scale;
     ctx.shadowColor=i%2?"#a56aff":"#44eaff";
-    circle(x,y,i%3===0?3:2,i%2?"#a56aff":"#44eaff");
+    circle(x,y,(i%3===0?3:2)*scale,i%2?"#a56aff":"#44eaff");
     ctx.restore();
   }
 
-  /* Floating particles */
   particles.forEach(p=>{
     p.angle+=p.speed*speed*dt;
     const x=cx+Math.cos(p.angle)*p.radius;
@@ -612,14 +654,13 @@ function drawCore(timestamp){
 
     ctx.save();
     ctx.globalAlpha=p.alpha;
-    ctx.shadowBlur=9;
+    ctx.shadowBlur=9*scale;
     ctx.shadowColor="#44eaff";
     circle(x,y,p.size,"#8cefff");
     ctx.restore();
   });
 
-  /* Core sphere */
-  const r=45*pulse*(active?1.07:1);
+  const r=48*scale*pulse*(active?1.08:1);
   const sphere=ctx.createRadialGradient(
     cx-r*.35,cy-r*.4,2,
     cx,cy,r
@@ -633,68 +674,66 @@ function drawCore(timestamp){
   sphere.addColorStop(1,"#090d20");
 
   ctx.save();
-  ctx.shadowBlur=active?40:24;
+  ctx.shadowBlur=(active?42:26)*scale;
   ctx.shadowColor=active?"#43eaff":"#257bff";
   circle(cx,cy,r,sphere);
   ctx.restore();
 
-  /* Clip energy bands inside orb */
+  /* Active animation inside circle */
   ctx.save();
   ctx.beginPath();
   ctx.arc(cx,cy,r,0,Math.PI*2);
   ctx.clip();
 
-  for(let i=0;i<6;i++){
-    const bandY=cy-r+i*r*.4+Math.sin(frame*.03+i)*5;
+  // Rotating inner energy arcs
+  for(let i=0;i<3;i++){
+    const startAngle = frame*.035*(i%2===0?1:-1.3) + i*(Math.PI*2/3);
     ctx.beginPath();
-    ctx.ellipse(cx,bandY,r*1.08,4+Math.sin(frame*.04+i)*3,0,0,Math.PI*2);
+    ctx.arc(cx,cy,r*(0.55 + i*0.14),startAngle,startAngle + Math.PI*0.85);
+    ctx.strokeStyle = i===1 ? "rgba(180,138,255,0.55)" : "rgba(110,248,255,0.6)";
+    ctx.lineWidth = (active ? 2.4 : 1.5)*scale;
+    ctx.stroke();
+  }
+
+  // Pulsing inner wave rings
+  const waveR = ((frame * (active ? 1.8 : 0.85)) % (r * 0.92)) + 6*scale;
+  ctx.beginPath();
+  ctx.arc(cx,cy,waveR,0,Math.PI*2);
+  ctx.strokeStyle = `rgba(175,252,255,${Math.max(0.08, 0.55 - waveR/(r*1.5))})`;
+  ctx.lineWidth = 1.5*scale;
+  ctx.stroke();
+
+  // Horizontal wave bands
+  for(let i=0;i<6;i++){
+    const bandY=cy-r+i*r*.4+Math.sin(frame*.04+i)*5*scale;
+    ctx.beginPath();
+    ctx.ellipse(cx,bandY,r*1.08,(4+Math.sin(frame*.05+i)*3)*scale,0,0,Math.PI*2);
     ctx.strokeStyle=i%2?"rgba(140,115,255,.35)":"rgba(130,245,255,.38)";
     ctx.lineWidth=1.3;
     ctx.stroke();
   }
 
-  /* Moving reflection */
-  const sweep=(Math.sin(frame*.025*speed)+1)/2;
+  const sweep=(Math.sin(frame*.03*speed)+1)/2;
   const sx=cx-r+sweep*r*2;
-  const reflection=ctx.createLinearGradient(sx-20,cy-r,sx+20,cy+r);
+  const reflection=ctx.createLinearGradient(sx-20*scale,cy-r,sx+20*scale,cy+r);
   reflection.addColorStop(0,"transparent");
-  reflection.addColorStop(.5,"rgba(220,255,255,.3)");
+  reflection.addColorStop(.5,"rgba(220,255,255,.32)");
   reflection.addColorStop(1,"transparent");
   ctx.fillStyle=reflection;
   ctx.fillRect(cx-r,cy-r,r*2,r*2);
 
-  ctx.restore();
-
-  /* Scan sweep and spark effects */
   if(active){
-    const sweepY=cy-r+((frame*3)% (r*2));
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx,cy,r,0,Math.PI*2);
-    ctx.clip();
-
-    const scanGrad=ctx.createLinearGradient(cx-r,sweepY-12,cx+r,sweepY+12);
+    const sweepY=cy-r+((frame*3.4)%(r*2));
+    const scanGrad=ctx.createLinearGradient(cx-r,sweepY-12*scale,cx+r,sweepY+12*scale);
     scanGrad.addColorStop(0,"transparent");
-    scanGrad.addColorStop(.5,"rgba(100,245,255,.7)");
+    scanGrad.addColorStop(.5,"rgba(100,245,255,.75)");
     scanGrad.addColorStop(1,"transparent");
     ctx.fillStyle=scanGrad;
     ctx.fillRect(cx-r,cy-r,r*2,r*2);
-    ctx.restore();
-
-    for(let i=0;i<4;i++){
-      const a=frame*.07+i*1.57;
-      const rr=r+9+Math.sin(frame*.1+i)*5;
-      const x=cx+Math.cos(a)*rr;
-      const y=cy+Math.sin(a)*rr;
-      ctx.save();
-      ctx.shadowBlur=14;
-      ctx.shadowColor="#44eaff";
-      circle(x,y,1.5+Math.sin(frame*.1+i),"#b8faff");
-      ctx.restore();
-    }
   }
 
-  /* Update scan progress */
+  ctx.restore();
+
   if(scanning){
     const elapsed=timestamp-scanStart;
     const pct=Math.min(elapsed/scanTotal,1);
@@ -702,11 +741,18 @@ function drawCore(timestamp){
     progressFill.style.width=val+"%";
     scanPercent.textContent=val+"%";
 
+    // Shuffle live number & BIG/SMALL while scanning
+    const rollingNum = Math.floor(Math.random() * 100);
+    const rollingSize = rollingNum >= 50 ? "BIG" : "SMALL";
+    coreNumber.textContent = String(rollingNum).padStart(2,"0");
+    coreBadge.textContent = rollingSize;
+    coreBadge.className = "core-badge " + rollingSize.toLowerCase();
+
     const messages=[
       "INITIALIZING CORE...",
-      "LOADING VISUAL MODULES...",
-      "RUNNING SIMULATION...",
-      "FINALIZING SEQUENCE..."
+      "CALCULATING NUMBER...",
+      "EVALUATING BIG / SMALL...",
+      "FINALIZING RESULT..."
     ];
     scanText.textContent=messages[Math.min(3,Math.floor(pct*4))];
 
@@ -716,7 +762,6 @@ function drawCore(timestamp){
   requestAnimationFrame(drawCore);
 }
 
-/* Start visual scan */
 function startScan(){
   if(scanning)return;
 
@@ -725,31 +770,40 @@ function startScan(){
 
   coreCard.classList.add("scanning");
   scanBtn.disabled=true;
-  scanBtn.textContent="◈  SCANNING IN PROGRESS";
+  scanBtn.textContent="◈  GENERATING NUMBER...";
 
   statePill.textContent="SCANNING";
   coreName.textContent="SGOD AI ACTIVE";
-  coreSub.textContent="VISUAL SEQUENCE IN PROGRESS";
+  coreSub.textContent="ANIMATING & ROLLING NUMBER";
   scanText.textContent="INITIALIZING...";
   scanPercent.textContent="0%";
   progressFill.style.width="0%";
-  coreStatus.textContent="SCANNING";
 
-  addLog("Visual scan initialized","RUN");
+  addLog("Core animation & number roll started","RUN");
 }
 
-/* Finish */
 function finishScan(){
   scanning=false;
   coreCard.classList.remove("scanning");
 
+  const finalNum = Math.floor(Math.random() * 100);
+  const label = finalNum >= 50 ? "BIG" : "SMALL";
+  const formattedNum = String(finalNum).padStart(2,"0");
+  currentNumber = finalNum;
+
+  coreNumber.textContent = formattedNum;
+  coreBadge.textContent = label;
+  coreBadge.className = "core-badge " + label.toLowerCase();
+
+  lastResult.textContent = `${formattedNum} · ${label}`;
+  lastResult.className = label === "BIG" ? "green" : "pink";
+
   statePill.textContent="COMPLETE";
-  coreName.textContent="SGOD AI CORE";
-  coreSub.textContent="DEMO SEQUENCE COMPLETE";
-  scanText.textContent="SCAN COMPLETED";
+  coreName.textContent=`RESULT: ${label}`;
+  coreSub.textContent=`NUMBER ${formattedNum} (${finalNum >= 50 ? "50–99 BIG" : "00–49 SMALL"})`;
+  scanText.textContent=`RESULT: ${formattedNum} (${label})`;
   scanPercent.textContent="100%";
   progressFill.style.width="100%";
-  coreStatus.textContent="READY";
 
   totalScans++;
   scanCount.textContent=String(totalScans).padStart(2,"0");
@@ -757,10 +811,9 @@ function finishScan(){
   scanBtn.disabled=false;
   scanBtn.textContent="✦  RUN NEW SCAN";
 
-  addLog("Visual sequence completed","DONE");
+  addLog(`Number ${formattedNum} → ${label}`, label);
 }
 
-/* Activity terminal */
 function addLog(message,tag){
   const row=document.createElement("div");
   row.className="log-row";
@@ -783,7 +836,6 @@ function addLog(message,tag){
   }
 }
 
-/* Clock */
 function updateClock(){
   const now=new Date();
 
@@ -791,11 +843,10 @@ function updateClock(){
     hour12:false
   });
 
-  const remaining=60-now.getSeconds();
+  const remaining=(60-now.getSeconds())%60;
   $("timer").textContent="00:"+String(remaining).padStart(2,"0");
 }
 
-/* Buttons */
 scanBtn.addEventListener("click",startScan);
 
 $("clearBtn").addEventListener("click",()=>{
@@ -803,10 +854,9 @@ $("clearBtn").addEventListener("click",()=>{
   addLog("Terminal cleared","READY");
 });
 
-/* Start */
 resize();
 updateClock();
-setInterval(updateClock,1000);
+setInterval(updateClock,250);
 requestAnimationFrame(drawCore);
 
 })();
