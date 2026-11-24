@@ -58,7 +58,7 @@ background-size:24px 24px,24px 24px,auto;
 box-shadow:0 0 20px #7a00ff22
 }
 .scanline{position:absolute;top:0;width:100%;height:2px;
-background:linear-gradient(90,transparent,var(--c),var(--p),transparent);
+background:linear-gradient(90deg,transparent,var(--c),var(--p),transparent);
 box-shadow:0 0 15px var(--c);animation:scan 3s linear infinite}
 @keyframes scan{to{top:100%}}
 .orb{
@@ -74,10 +74,14 @@ animation:spin 3s linear infinite}
 border-radius:50%;animation:spin 8s linear infinite reverse}
 .orb-text{font-size:65px;font-weight:900;font-style:italic;
 background:linear-gradient(135deg,#fff,#bd00ff,#00eaff);
--webkit-background-clip:text;color:transparent;animation:pulse 2s infinite}
+-webkit-background-clip:text;color:transparent;animation:pulse 2s infinite;
+text-align:center;line-height:1}
 @keyframes pulse{50%{transform:scale(1.12)}}
 .scan-status{position:absolute;bottom:22px;text-align:center;width:100%;
-font-size:11px;color:#d1b7ff;letter-spacing:2px}
+font-size:11px;color:#d1b7ff;letter-spacing:2px;font-weight:bold}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
+.res-box{background:linear-gradient(135deg,#0c0915,#080711);border:1px solid #6322b9;border-radius:13px;padding:13px;text-align:center}
+.res-val{font-size:24px;font-weight:900;margin-top:6px;letter-spacing:2px;color:#fff;text-shadow:0 0 12px var(--c)}
 .progress-box{margin-top:15px;padding:15px;border:1px solid #50208d;
 border-radius:13px;background:#090711}
 .prog-head{display:flex;justify-content:space-between;color:#bbb;font-size:11px;margin-bottom:10px}
@@ -104,7 +108,7 @@ display:grid;place-items:center;color:#bc68ff;font-size:20px}
 .history-row{display:flex;justify-content:space-between;align-items:center;
 padding:12px;border:1px solid #241934;border-radius:10px;margin-top:7px;
 background:#080710;font-size:11px}
-.history-row span:last-child{color:var(--g)}
+.history-row span:last-child{color:var(--g);font-weight:bold}
 .nav{display:flex;justify-content:space-around;padding:15px 5px;margin-top:18px;
 border:1px solid #5322a4;border-radius:14px;background:#080611}
 .nav div{text-align:center;font-size:10px;color:#aaa}
@@ -150,8 +154,19 @@ padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
 
 <div class="scanner">
   <div class="scanline"></div>
-  <div class="orb"><div class="orb-text">N</div></div>
+  <div class="orb"><div class="orb-text" id="orbText">N</div></div>
   <div class="scan-status" id="scanStatus">SYSTEM READY • AWAITING INPUT</div>
+</div>
+
+<div class="result-grid">
+  <div class="res-box">
+    <div class="label">PREDICTED SIZE</div>
+    <div class="res-val" id="predSize">--</div>
+  </div>
+  <div class="res-box">
+    <div class="label">PREDICTED NUMBER</div>
+    <div class="res-val" id="predNum">--</div>
+  </div>
 </div>
 
 <div class="progress-box">
@@ -185,7 +200,7 @@ padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
 </div>
 
 <div class="history">
-  <div class="history-title">◷ RECENT SYSTEM LOG</div>
+  <div class="history-title">◷ RECENT PREDICTION LOG</div>
   <div id="historyList"></div>
 </div>
 
@@ -200,6 +215,9 @@ padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
 </div>
 
 <script>
+let currentPeriod = "";
+let lastPredictedPeriod = "";
+
 // 30-second cycle display
 function updateClock(){
   const now = new Date();
@@ -207,22 +225,48 @@ function updateClock(){
   const remaining = 30 - (sec % 30);
   document.getElementById("timer").textContent = remaining;
 
-  // Demo period display in date + game-code + sequence format.
-  // The sequence is a local clock-derived demo counter.
   const date = now.getFullYear().toString()
     +String(now.getMonth()+1).padStart(2,"0")
     +String(now.getDate()).padStart(2,"0");
 
   const secondsToday = now.getHours()*3600 + now.getMinutes()*60 + sec;
   const sequence = Math.floor(secondsToday/30);
-  const period = date + "1000" + String(sequence).padStart(5,"0");
+  currentPeriod = date + "1000" + String(sequence).padStart(5,"0");
 
-  document.getElementById("period").textContent = period;
+  document.getElementById("period").textContent = currentPeriod;
+
+  // Reset display when new 30s period starts
+  if(lastPredictedPeriod && lastPredictedPeriod !== currentPeriod && !scanning){
+    document.getElementById("orbText").textContent = "N";
+    document.getElementById("orbText").style.fontSize = "65px";
+    document.getElementById("predSize").textContent = "--";
+    document.getElementById("predSize").style.color = "#fff";
+    document.getElementById("predNum").textContent = "--";
+    document.getElementById("scanStatus").textContent = "NEW CYCLE • READY TO SCAN";
+    lastPredictedPeriod = "";
+  }
 }
 updateClock();
 setInterval(updateClock,250);
 
-// Demo scan animation only
+// Time & Period based deterministic algorithm (0-9 & BIG/SMALL)
+function calculatePrediction(periodStr){
+  const now = new Date();
+  const digits = periodStr.split("").map(Number);
+  let digitSum = digits.reduce((a,b) => a + b, 0);
+  
+  const seq = parseInt(periodStr.slice(-5), 10);
+  const hour = now.getHours();
+  const min = now.getMinutes();
+
+  // Weighted hash formula based on current time & sequence
+  const rawHash = ((seq * 7) + (digitSum * 3) + (hour * 11) + (min * 5)) ^ (seq >> 2);
+  const predictedNumber = Math.abs(rawHash) % 10;
+  const predictedSize = predictedNumber >= 5 ? "BIG" : "SMALL";
+
+  return { number: predictedNumber, size: predictedSize };
+}
+
 let scanning = false;
 
 function startScan(){
@@ -237,46 +281,66 @@ function startScan(){
   const title = document.getElementById("progTitle");
   const module = document.getElementById("module");
   const modStatus = document.getElementById("modStatus");
+  const orbText = document.getElementById("orbText");
+  const predSizeEl = document.getElementById("predSize");
+  const predNumEl = document.getElementById("predNum");
 
   const messages=[
     "INITIALIZING VISUAL CORE...",
-    "LOADING HOLOGRAPHIC MODULE...",
-    "SYNCHRONIZING INTERFACE...",
-    "PROCESSING DEMO SEQUENCE...",
-    "CALIBRATING EFFECTS...",
-    "FINALIZING ANIMATION..."
+    "ANALYZING CURRENT PERIOD...",
+    "CALCULATING TIME HASH...",
+    "PROCESSING NEURAL MATRIX...",
+    "CALIBRATING PROBABILITY...",
+    "FINALIZING PREDICTION..."
   ];
 
   btn.disabled=true;
   btn.textContent="⟳ SCANNING...";
   sys.textContent="ACTIVE";
   modStatus.textContent="ACTIVE";
+  orbText.textContent="?";
+  orbText.style.fontSize="65px";
 
   let p=0;
   const interval=setInterval(()=>{
-    p=Math.min(100,p+Math.random()*4+1);
+    p=Math.min(100,p+Math.random()*5+2);
     fill.style.width=p+"%";
     percent.textContent=Math.floor(p)+"%";
 
     const index=Math.min(Math.floor(p/18),messages.length-1);
     status.textContent=messages[index];
     module.textContent=messages[index];
-    title.textContent="VISUAL SEQUENCE RUNNING";
+    title.textContent="ALGORITHM RUNNING";
 
     if(p>=100){
       clearInterval(interval);
-      status.textContent="DEMO SEQUENCE COMPLETE";
+
+      const result = calculatePrediction(currentPeriod);
+      lastPredictedPeriod = currentPeriod;
+
+      // Update Orb and Result Boxes
+      orbText.style.fontSize = "34px";
+      orbText.textContent = result.size;
+
+      predSizeEl.textContent = result.size;
+      predSizeEl.style.color = result.size === "BIG" ? "#22ff62" : "#00eaff";
+
+      predNumEl.textContent = result.number;
+      predNumEl.style.color = result.size === "BIG" ? "#22ff62" : "#00eaff";
+
+      status.textContent = "RESULT: " + result.size + " (" + result.number + ")";
       sys.textContent="READY";
-      module.textContent="Animation complete";
+      module.textContent="Prediction locked";
       modStatus.textContent="DONE";
       title.textContent="COMPLETED";
       btn.textContent="✓ SCAN COMPLETE";
+
+      addHistoryLog(currentPeriod, result.size, result.number);
 
       setTimeout(()=>{
         scanning=false;
         btn.disabled=false;
         btn.textContent="⚡ START SCAN";
-        status.textContent="SYSTEM READY • AWAITING INPUT";
         module.textContent="Waiting for command";
         modStatus.textContent="IDLE";
         fill.style.width="0%";
@@ -284,19 +348,35 @@ function startScan(){
         title.textContent="INTERFACE PROGRESS";
       },1500);
     }
-  },100);
+  },80);
 }
 
-// Demo activity history
 const historyList=document.getElementById("historyList");
-const logs=["Core interface booted","Neon modules initialized","Timer synchronized","Visual scan ready","HUD calibration complete"];
+const initialLogs=[
+  {msg:"Core interface booted", status:"READY"},
+  {msg:"Neural algorithm synced", status:"ONLINE"}
+];
 
-logs.forEach((msg,i)=>{
+initialLogs.forEach((item)=>{
   const row=document.createElement("div");
   row.className="history-row";
-  row.innerHTML="<span>"+msg+"</span><span>READY</span>";
+  row.innerHTML="<span>"+item.msg+"</span><span>"+item.status+"</span>";
   historyList.appendChild(row);
 });
+
+function addHistoryLog(period, size, num){
+  const shortPeriod = period.slice(-5);
+  const row = document.createElement("div");
+  row.className = "history-row";
+  const color = size === "BIG" ? "#22ff62" : "#00eaff";
+  row.innerHTML = `<span>PERIOD #${shortPeriod}</span><span style="color:${color}">${size} • ${num}</span>`;
+  historyList.prepend(row);
+
+  // Keep max 6 rows in log
+  if(historyList.children.length > 6){
+    historyList.removeChild(historyList.lastChild);
+  }
+}
 </script>
 </body>
 </html>
