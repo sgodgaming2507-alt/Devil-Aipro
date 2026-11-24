@@ -2,864 +2,301 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#030610">
-<title>SGod AI - Premium Core</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#05040b">
+<title>NEXUS × SGOD AI</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;
-}
-:root{
-  --cyan:#44eaff;
-  --blue:#3878ff;
-  --purple:#9a63ff;
-  --bg:#030610;
-  --card:#0a1020;
-  --muted:#7888a5;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 body{
+  background:#03040a;color:#fff;font-family:Arial,sans-serif;
   min-height:100vh;
-  color:#edf6ff;
-  background:
-    radial-gradient(ellipse at 50% -10%,#14264c 0%,transparent 50%),
-    radial-gradient(ellipse at 90% 50%,#100c2a 0%,transparent 45%),
-    var(--bg);
-  padding:15px;
-  overflow-x:hidden;
 }
-.app{
-  width:100%;
-  max-width:520px;
-  margin:auto;
+:root{--p:#a000ff;--c:#00eaff;--g:#22ff62}
+.app{max-width:540px;margin:auto;padding:12px;overflow:hidden}
+header{
+  border:1px solid #8b19ff;border-radius:16px;padding:15px;
+  display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(120deg,#080610,#160927,#080610);
+  box-shadow:0 0 16px #9200ff33
 }
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin:8px 0 26px;
-}
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.logo{
-  width:46px;
-  height:46px;
-  display:grid;
-  place-items:center;
-  border-radius:14px;
-  font-size:24px;
-  font-weight:900;
-  color:#03101a;
-  background:linear-gradient(135deg,#45edff,#7963ff);
-  box-shadow:0 0 22px #44eaff45;
-  flex-shrink:0;
-}
-.brand h1{
-  font-size:18px;
-  letter-spacing:2px;
-}
-.brand h1 span{
-  color:var(--cyan);
-}
-.brand p{
-  font-size:9px;
-  color:#7486a7;
-  letter-spacing:2px;
-  margin-top:4px;
-}
-.online-pill{
-  font-size:9px;
-  color:#53e6b3;
-  padding:8px 10px;
-  border:1px solid #255747;
-  border-radius:30px;
-  background:#0a1b19;
-  white-space:nowrap;
-}
-.online-dot{
-  display:inline-block;
-  width:6px;height:6px;
-  border-radius:50%;
-  background:#53e6b3;
-  box-shadow:0 0 9px #53e6b3;
-  margin-right:5px;
-}
-.hero{
-  margin-bottom:19px;
-}
-.hero small{
-  color:var(--cyan);
-  letter-spacing:3px;
-  font-size:10px;
-}
-.hero h2{
-  font-size:clamp(26px, 6vw, 32px);
-  line-height:1.22;
-  margin:9px 0;
-}
-.hero h2 span{
-  background:linear-gradient(90deg,#43eaff,#a76aff);
-  -webkit-background-clip:text;
-  color:transparent;
-}
-.hero p{
-  color:#8392ae;
-  font-size:12px;
-  line-height:1.7;
-}
-.card{
-  background:linear-gradient(145deg,#10182b,#080c17);
-  border:1px solid #202c45;
-  border-radius:20px;
-  padding:17px;
-  margin-bottom:15px;
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 14px 35px #0003;
-}
-.card::before{
-  content:"";
-  position:absolute;
-  width:130px;height:130px;
-  top:-65px;right:-45px;
-  background:#3d68ff12;
-  filter:blur(45px);
-  pointer-events:none;
-}
-.card-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:14px;
-}
-.card-head small{
-  font-size:10px;
-  letter-spacing:2px;
-  color:#8292ae;
-}
-.pill{
-  padding:5px 9px;
-  font-size:9px;
-  letter-spacing:1px;
-  border:1px solid #24425b;
-  background:#0b1c2c;
-  color:var(--cyan);
-  border-radius:30px;
-}
-
-/* ===== AI CORE ===== */
-
-.core-card{
-  text-align:center;
-}
-.core-wrap{
-  width:min(280px,78vw);
-  aspect-ratio:1/1;
-  margin:0 auto;
-  position:relative;
-}
-#aiCoreCanvas{
-  width:100%;
-  height:100%;
-  display:block;
-}
-.core-overlay{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-  text-align:center;
-}
-.core-badge{
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:3px;
-  padding:3px 10px;
-  border-radius:20px;
-  background:rgba(3,6,16,0.72);
-  border:1px solid rgba(68,234,255,0.45);
-  color:#7cf3ff;
-  margin-bottom:4px;
-}
-.core-badge.big{
-  color:#51e4b4;
-  border-color:rgba(81,228,180,0.65);
-  box-shadow:0 0 12px rgba(81,228,180,0.25);
-}
-.core-badge.small{
-  color:#ff86b8;
-  border-color:rgba(255,134,184,0.65);
-  box-shadow:0 0 12px rgba(255,134,184,0.25);
-}
-.core-number{
-  font-size:34px;
-  font-weight:900;
-  line-height:1.05;
-  color:#ffffff;
-  text-shadow:0 0 16px rgba(68,234,255,0.85), 0 2px 8px rgba(0,0,0,0.9);
-  font-variant-numeric:tabular-nums;
-}
-.core-name{
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:4px;
-  margin-top:4px;
-  color:#d9faff;
-  text-shadow:0 0 12px #44eaff45;
-}
-.core-sub{
-  font-size:9px;
-  color:#7184a2;
-  letter-spacing:2px;
-  margin-top:7px;
-}
-.scan-progress{
-  height:5px;
-  border-radius:20px;
-  overflow:hidden;
-  background:#19233a;
-  margin-top:22px;
-}
-.scan-progress-fill{
-  width:0%;
-  height:100%;
-  border-radius:20px;
-  background:linear-gradient(90deg,#44eaff,#9a63ff);
-  box-shadow:0 0 12px #44eaff;
-}
-.scan-meta{
-  display:flex;
-  justify-content:space-between;
-  margin-top:9px;
-  color:#7889a7;
-  font-size:9px;
-  letter-spacing:1px;
-  font-variant-numeric:tabular-nums;
-}
-.scan-button{
-  width:100%;
-  border:none;
-  border-radius:14px;
-  padding:16px;
-  margin-top:17px;
-  color:#020713;
-  background:linear-gradient(110deg,#36eaff,#537bff,#a264ff);
-  font-weight:900;
-  font-size:12px;
-  letter-spacing:2px;
-  box-shadow:0 0 25px #44eaff20;
-  cursor:pointer;
-  transition:transform .2s,filter .2s;
-}
-.scan-button:active{
-  transform:scale(.97);
-  filter:brightness(1.15);
-}
-.scan-button:disabled{
-  opacity:.65;
-  cursor:default;
-}
-.scanning .core-wrap{
-  filter:drop-shadow(0 0 18px #44eaff30);
-}
-.scanning .core-name{
-  color:#69edff;
-}
-.scanning .pill{
-  color:#b48aff;
-  border-color:#6944a5;
-  background:#201532;
-}
-
-/* ===== CLOCK ===== */
-
-.clock-box{
-  border:1px solid #1e2b45;
-  border-radius:15px;
-  background:#070d1a;
-  padding:16px;
-}
-.clock-label{
-  font-size:9px;
-  color:#7d8eaa;
-  letter-spacing:2px;
-}
-.clock-time{
-  font-size:27px;
-  font-weight:900;
-  color:var(--cyan);
-  letter-spacing:2px;
-  margin:10px 0 17px;
-  font-variant-numeric:tabular-nums;
-  text-shadow:0 0 16px #44eaff20;
-}
+.logo{font-size:26px;font-weight:900;letter-spacing:1px;
+background:linear-gradient(90deg,#fff,#bf68ff,#00eaff);
+-webkit-background-clip:text;color:transparent}
+.logo small{display:block;font-size:9px;letter-spacing:3px;color:#c8a6ff;margin-top:4px}
+.live{border:1px solid var(--g);border-radius:30px;padding:8px 12px;color:var(--g);font-size:12px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--g);margin-right:5px;box-shadow:0 0 10px var(--g)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.panel{background:linear-gradient(135deg,#0c0915,#080711);border:1px solid #6322b9;border-radius:13px;padding:13px}
+.label{font-size:11px;color:#aaa;letter-spacing:1px}
+.value{font-size:19px;font-weight:bold;margin-top:7px;word-break:break-word}
+.sub{font-size:10px;color:var(--c);margin-top:5px}
+.period{font-size:16px!important;letter-spacing:.3px}
+.timer-wrap{display:flex;justify-content:center;margin:28px 0}
 .timer{
-  font-size:37px;
-  font-weight:900;
-  color:#f1f6ff;
-  letter-spacing:2px;
-  font-variant-numeric:tabular-nums;
+width:155px;height:155px;border-radius:50%;display:grid;place-items:center;
+position:relative;border:3px solid var(--g);background:#06070c;
+box-shadow:0 0 22px #18ff5944,inset 0 0 20px #18ff5922
 }
-
-/* ===== MONITOR ===== */
-
-.monitor-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
+.timer:before{content:"";position:absolute;inset:-12px;border-radius:50%;
+border:2px dashed var(--c);animation:spin 10s linear infinite}
+.timer:after{content:"";position:absolute;inset:-5px;border-radius:50%;
+border-top:2px solid var(--p);border-bottom:2px solid var(--c);
+border-left:2px solid transparent;border-right:2px solid transparent;
+animation:spin 4s linear infinite reverse}
+.tnum{font-size:50px;font-weight:900;text-shadow:0 0 15px var(--c);text-align:center}
+.tlabel{font-size:11px;color:var(--g);letter-spacing:3px;text-align:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+.section-head{text-align:center;color:var(--c);font-size:13px;letter-spacing:3px;margin:20px 0}
+.scanner{
+height:275px;position:relative;overflow:hidden;border:1px solid #5e20bd;
+border-radius:20px;background:
+linear-gradient(#00eaff0b 1px,transparent 1px),
+linear-gradient(90deg,#00eaff0b 1px,transparent 1px),
+radial-gradient(circle,#190c35,#05040a 70%);
+background-size:24px 24px,24px 24px,auto;
+box-shadow:0 0 20px #7a00ff22
 }
-.monitor-box{
-  border:1px solid #1d2941;
-  background:#080d19;
-  border-radius:13px;
-  padding:13px;
+.scanline{position:absolute;top:0;width:100%;height:2px;
+background:linear-gradient(90,transparent,var(--c),var(--p),transparent);
+box-shadow:0 0 15px var(--c);animation:scan 3s linear infinite}
+@keyframes scan{to{top:100%}}
+.orb{
+width:145px;height:145px;position:absolute;top:50%;left:50%;
+transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;
+border:2px solid var(--c);background:radial-gradient(circle,#300b65,#090414 70%);
+box-shadow:0 0 22px var(--p),inset 0 0 20px #00eaff55
 }
-.monitor-box small{
-  display:block;
-  color:#7888a5;
-  font-size:9px;
-  letter-spacing:1.5px;
-  margin-bottom:8px;
+.orb:before{content:"";position:absolute;inset:-12px;border:2px solid var(--p);
+border-radius:50%;border-left-color:transparent;border-right-color:transparent;
+animation:spin 3s linear infinite}
+.orb:after{content:"";position:absolute;inset:-22px;border:1px dashed #00eaff88;
+border-radius:50%;animation:spin 8s linear infinite reverse}
+.orb-text{font-size:65px;font-weight:900;font-style:italic;
+background:linear-gradient(135deg,#fff,#bd00ff,#00eaff);
+-webkit-background-clip:text;color:transparent;animation:pulse 2s infinite}
+@keyframes pulse{50%{transform:scale(1.12)}}
+.scan-status{position:absolute;bottom:22px;text-align:center;width:100%;
+font-size:11px;color:#d1b7ff;letter-spacing:2px}
+.progress-box{margin-top:15px;padding:15px;border:1px solid #50208d;
+border-radius:13px;background:#090711}
+.prog-head{display:flex;justify-content:space-between;color:#bbb;font-size:11px;margin-bottom:10px}
+.track{height:9px;background:#20152c;border-radius:20px;overflow:hidden}
+.fill{width:0;height:100%;background:linear-gradient(90deg,var(--p),var(--c),var(--g));
+box-shadow:0 0 12px var(--c);transition:width .15s}
+button{
+width:100%;margin-top:17px;height:57px;border:0;border-radius:13px;
+font-weight:900;font-size:15px;letter-spacing:3px;color:#fff;
+background:linear-gradient(100deg,#7100ed,#a000ff,#007bff);
+box-shadow:0 0 20px #8b00ff55;cursor:pointer
 }
-.monitor-box strong{
-  font-size:14px;
-  color:#dceaff;
-  font-variant-numeric:tabular-nums;
-}
-.cyan{color:#44eaff!important}
-.purple{color:#b28aff!important}
-.green{color:#51e4b4!important}
-.pink{color:#ff86b8!important}
-
-/* ===== TERMINAL ===== */
-
-.log-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.log-row{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  background:#080d19;
-  border:1px solid #1d2941;
-  border-radius:11px;
-  padding:11px;
-  color:#93a3bf;
-  font-size:10px;
-}
-.log-dot{
-  width:6px;height:6px;
-  background:var(--cyan);
-  border-radius:50%;
-  box-shadow:0 0 8px var(--cyan);
-  flex-shrink:0;
-}
-.log-time{
-  margin-left:auto;
-  font-size:9px;
-  color:#53617e;
-}
-.clear-btn{
-  border:none;
-  background:none;
-  color:var(--cyan);
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:1px;
-  cursor:pointer;
-}
-footer{
-  text-align:center;
-  color:#53617e;
-  font-size:10px;
-  line-height:1.8;
-  padding:18px 5px 25px;
-}
-footer b{
-  letter-spacing:2px;
-  color:#8b9bb8;
-}
-
-@media(max-width:360px){
-  body{padding:11px}
-  .hero h2{font-size:25px}
-}
-@media(prefers-reduced-motion:reduce){
-  *{scroll-behavior:auto!important}
-}
+button:disabled{opacity:.6}
+.item{display:flex;align-items:center;gap:12px;padding:13px;
+border:1px solid #292039;background:#090711;border-radius:12px;margin-top:9px}
+.icon{width:38px;height:38px;border-radius:10px;background:#180b30;
+display:grid;place-items:center;color:#bc68ff;font-size:20px}
+.item-info{flex:1}
+.item-info b{font-size:12px;display:block;margin-bottom:5px}
+.item-info span{font-size:10px;color:#888}
+.status{font-size:10px;color:var(--g)}
+.history{margin-top:18px}
+.history-title{font-size:12px;color:var(--c);letter-spacing:2px;margin-bottom:10px}
+.history-row{display:flex;justify-content:space-between;align-items:center;
+padding:12px;border:1px solid #241934;border-radius:10px;margin-top:7px;
+background:#080710;font-size:11px}
+.history-row span:last-child{color:var(--g)}
+.nav{display:flex;justify-content:space-around;padding:15px 5px;margin-top:18px;
+border:1px solid #5322a4;border-radius:14px;background:#080611}
+.nav div{text-align:center;font-size:10px;color:#aaa}
+.nav b{display:block;font-size:20px;color:#bd58ff;margin-bottom:5px}
+footer{text-align:center;color:#716686;font-size:9px;letter-spacing:3px;
+padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
+@media(max-width:360px){.logo{font-size:21px}.period{font-size:14px!important}}
 </style>
 </head>
-
 <body>
-<main class="app">
+<div class="app">
 
-<!-- HEADER -->
-<header class="topbar">
-  <div class="brand">
-    <div class="logo">S</div>
-    <div>
-      <h1>SGod <span>AI</span></h1>
-      <p>NEURAL INTERFACE V3.0</p>
-    </div>
+<header>
+  <div class="logo">NEXUS
+    <small>SGOD AI • PREMIUM EDITION</small>
   </div>
-  <div class="online-pill">
-    <span class="online-dot"></span> SYSTEM ONLINE
-  </div>
+  <div class="live"><span class="dot"></span>LIVE</div>
 </header>
 
-<!-- WELCOME -->
-<section class="hero">
-  <small>◈ NEXT GENERATION INTERFACE</small>
-  <h2>Welcome to<br><span>SGod Intelligence</span></h2>
-  <p>Advanced visual simulation interface.<br>
-  Experience the next generation of AI animation.</p>
-</section>
-
-<!-- AI CORE -->
-<section class="card core-card" id="coreCard">
-  <div class="card-head">
-    <small>NEURAL CORE</small>
-    <span class="pill" id="statePill">READY</span>
+<div class="grid">
+  <div class="panel">
+    <div class="label">CURRENT PERIOD</div>
+    <div class="value period" id="period">--</div>
+    <div class="sub">30 SEC CYCLE</div>
   </div>
+  <div class="panel">
+    <div class="label">SYSTEM STATUS</div>
+    <div class="value" id="sys">READY</div>
+    <div class="sub">● Interface Online</div>
+  </div>
+</div>
 
-  <div class="core-wrap" id="coreWrap">
-    <canvas id="aiCoreCanvas"></canvas>
-    <div class="core-overlay">
-      <div class="core-badge" id="coreBadge">IDLE</div>
-      <div class="core-number" id="coreNumber">--</div>
+<div class="timer-wrap">
+  <div class="timer">
+    <div>
+      <div class="tnum" id="timer">30</div>
+      <div class="tlabel">SECONDS</div>
     </div>
   </div>
+</div>
 
-  <div class="core-name" id="coreName">SGOD AI CORE</div>
-  <div class="core-sub" id="coreSub">PRESS SCAN FOR NUMBER &amp; SIZE</div>
+<div class="section-head">✦ NEURAL CORE INTERFACE ✦</div>
 
-  <div class="scan-progress">
-    <div class="scan-progress-fill" id="progressFill"></div>
+<div class="scanner">
+  <div class="scanline"></div>
+  <div class="orb"><div class="orb-text">N</div></div>
+  <div class="scan-status" id="scanStatus">SYSTEM READY • AWAITING INPUT</div>
+</div>
+
+<div class="progress-box">
+  <div class="prog-head">
+    <span id="progTitle">INTERFACE PROGRESS</span>
+    <span id="percent">0%</span>
   </div>
+  <div class="track"><div class="fill" id="fill"></div></div>
+</div>
 
-  <div class="scan-meta">
-    <span id="scanText">WAITING FOR COMMAND</span>
-    <span id="scanPercent">0%</span>
-  </div>
+<button id="scanBtn" onclick="startScan()">⚡ START SCAN</button>
 
-  <button class="scan-button" id="scanBtn">
-    ✦ &nbsp; START AI SCAN
-  </button>
-</section>
+<div class="section-head">◈ SYSTEM ACTIVITY</div>
 
-<!-- LIVE CLOCK -->
-<section class="card">
-  <div class="card-head">
-    <small>LIVE TIME SYSTEM</small>
-    <span class="pill">REAL TIME</span>
-  </div>
+<div class="item">
+  <div class="icon">◉</div>
+  <div class="item-info"><b>Neural Interface</b><span>Visual module initialized</span></div>
+  <div class="status">ONLINE</div>
+</div>
 
-  <div class="clock-box">
-    <div class="clock-label">LOCAL CLOCK</div>
-    <div class="clock-time" id="clock">00:00:00</div>
+<div class="item">
+  <div class="icon">⌁</div>
+  <div class="item-info"><b>Holographic Core</b><span>Animation engine ready</span></div>
+  <div class="status">READY</div>
+</div>
 
-    <div class="clock-label">NEXT MINUTE IN</div>
-    <div class="timer" id="timer">00:00</div>
-  </div>
-</section>
+<div class="item">
+  <div class="icon">⟳</div>
+  <div class="item-info"><b>Scan Module</b><span id="module">Waiting for command</span></div>
+  <div class="status" id="modStatus">IDLE</div>
+</div>
 
-<!-- MONITOR -->
-<section class="card">
-  <div class="card-head">
-    <small>SYSTEM MONITOR</small>
-    <span class="pill">MONITORING</span>
-  </div>
+<div class="history">
+  <div class="history-title">◷ RECENT SYSTEM LOG</div>
+  <div id="historyList"></div>
+</div>
 
-  <div class="monitor-grid">
-    <div class="monitor-box">
-      <small>LAST NUMBER &amp; SIZE</small>
-      <strong class="cyan" id="lastResult">--</strong>
-    </div>
+<div class="nav">
+  <div><b>⌂</b>HOME</div>
+  <div><b>◷</b>SCAN</div>
+  <div><b>◈</b>CORE</div>
+  <div><b>⚙</b>SETTINGS</div>
+</div>
 
-    <div class="monitor-box">
-      <small>SCAN SESSION</small>
-      <strong class="purple" id="scanCount">00</strong>
-    </div>
-
-    <div class="monitor-box">
-      <small>ENGINE</small>
-      <strong>SG-V3</strong>
-    </div>
-
-    <div class="monitor-box">
-      <small>INTERFACE</small>
-      <strong class="green">ACTIVE</strong>
-    </div>
-  </div>
-</section>
-
-<!-- ACTIVITY -->
-<section class="card">
-  <div class="card-head">
-    <small>ACTIVITY TERMINAL</small>
-    <button class="clear-btn" id="clearBtn">CLEAR LOG</button>
-  </div>
-
-  <div class="log-list" id="logs">
-    <div class="log-row">
-      <span class="log-dot"></span>
-      <span>System initialized</span>
-      <span class="log-time">READY</span>
-    </div>
-    <div class="log-row">
-      <span class="log-dot"></span>
-      <span>Neural interface loaded</span>
-      <span class="log-time">OK</span>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <b>SGOD AI • NEON EDITION</b><br>
-  Visual simulation only · Random demo numbers (00–99)
-</footer>
-
-</main>
+<footer>NEXUS × SGOD AI<br><br>FUTURE INTERFACE • NEON EDITION</footer>
+</div>
 
 <script>
-(() => {
-"use strict";
-
-const $ = id => document.getElementById(id);
-
-const canvas = $("aiCoreCanvas");
-const wrap = $("coreWrap");
-const ctx = canvas.getContext("2d");
-
-const coreCard = $("coreCard");
-const scanBtn = $("scanBtn");
-const statePill = $("statePill");
-const coreBadge = $("coreBadge");
-const coreNumber = $("coreNumber");
-const coreName = $("coreName");
-const coreSub = $("coreSub");
-const scanText = $("scanText");
-const scanPercent = $("scanPercent");
-const progressFill = $("progressFill");
-const lastResult = $("lastResult");
-const scanCount = $("scanCount");
-const logs = $("logs");
-
-let width = 0;
-let height = 0;
-let scale = 1;
-let dpr = 1;
-let frame = 0;
-let particles = [];
-let scanning = false;
-let scanStart = 0;
-let scanTotal = 3000;
-let totalScans = 0;
-let lastTime = 0;
-let currentNumber = null;
-
-function resize(){
-  const rect = wrap.getBoundingClientRect();
-  width = Math.max(180, rect.width || 280);
-  height = Math.max(180, rect.height || 280);
-  scale = Math.min(width, height) / 280;
-  dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-  canvas.width = Math.round(width * dpr);
-  canvas.height = Math.round(height * dpr);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-  particles = Array.from({length:90},(_,i)=>({
-    angle:Math.random()*Math.PI*2,
-    radius:(42+Math.random()*72)*scale,
-    speed:(.001+Math.random()*.004)*(i%2===0?1:-1),
-    size:(.6+Math.random()*1.4)*scale,
-    alpha:.25+Math.random()*.65
-  }));
-}
-window.addEventListener("resize",resize);
-
-function ellipse(cx,cy,rx,ry,angle,color,lineWidth=1){
-  ctx.save();
-  ctx.translate(cx,cy);
-  ctx.rotate(angle);
-  ctx.beginPath();
-  ctx.ellipse(0,0,rx,ry,0,0,Math.PI*2);
-  ctx.strokeStyle=color;
-  ctx.lineWidth=lineWidth;
-  ctx.stroke();
-  ctx.restore();
-}
-
-function circle(x,y,r,color){
-  ctx.beginPath();
-  ctx.arc(x,y,r,0,Math.PI*2);
-  ctx.fillStyle=color;
-  ctx.fill();
-}
-
-function drawCore(timestamp){
-  frame++;
-  const dt = lastTime ? Math.min(timestamp-lastTime,40) : 16;
-  lastTime = timestamp;
-
-  const active = scanning;
-  const speed = active ? 2.8 : 1.1;
-  const cx = width/2;
-  const cy = height/2;
-  const pulse = 1+Math.sin(frame*.045)*.04;
-
-  ctx.clearRect(0,0,width,height);
-
-  const ambient=ctx.createRadialGradient(cx,cy,4,cx,cy,width*.46);
-  ambient.addColorStop(0,"rgba(35,210,255,.15)");
-  ambient.addColorStop(.5,"rgba(95,60,255,.05)");
-  ambient.addColorStop(1,"transparent");
-  ctx.fillStyle=ambient;
-  ctx.fillRect(0,0,width,height);
-
-  ellipse(cx,cy,102*scale,32*scale,frame*.012*speed,"rgba(60,225,255,.42)");
-  ellipse(cx,cy,88*scale,28*scale,-frame*.019*speed,"rgba(160,90,255,.58)");
-  ellipse(cx,cy,112*scale,40*scale,frame*.007*speed,"rgba(255,255,255,.16)");
-  ellipse(cx,cy,75*scale,25*scale,-frame*.026*speed,"rgba(60,225,255,.65)");
-
-  for(let i=0;i<7;i++){
-    const a=frame*.016*speed+i*(Math.PI*2/7);
-    const x=cx+Math.cos(a)*100*scale;
-    const y=cy+Math.sin(a)*31*scale;
-
-    ctx.save();
-    ctx.shadowBlur=12*scale;
-    ctx.shadowColor=i%2?"#a56aff":"#44eaff";
-    circle(x,y,(i%3===0?3:2)*scale,i%2?"#a56aff":"#44eaff");
-    ctx.restore();
-  }
-
-  particles.forEach(p=>{
-    p.angle+=p.speed*speed*dt;
-    const x=cx+Math.cos(p.angle)*p.radius;
-    const y=cy+Math.sin(p.angle)*p.radius*.7;
-
-    ctx.save();
-    ctx.globalAlpha=p.alpha;
-    ctx.shadowBlur=9*scale;
-    ctx.shadowColor="#44eaff";
-    circle(x,y,p.size,"#8cefff");
-    ctx.restore();
-  });
-
-  const r=48*scale*pulse*(active?1.08:1);
-  const sphere=ctx.createRadialGradient(
-    cx-r*.35,cy-r*.4,2,
-    cx,cy,r
-  );
-  sphere.addColorStop(0,"#eaffff");
-  sphere.addColorStop(.12,"#b1faff");
-  sphere.addColorStop(.28,"#55eaff");
-  sphere.addColorStop(.52,"#218bdc");
-  sphere.addColorStop(.76,"#273b99");
-  sphere.addColorStop(.93,"#171a4b");
-  sphere.addColorStop(1,"#090d20");
-
-  ctx.save();
-  ctx.shadowBlur=(active?42:26)*scale;
-  ctx.shadowColor=active?"#43eaff":"#257bff";
-  circle(cx,cy,r,sphere);
-  ctx.restore();
-
-  /* Active animation inside circle */
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx,cy,r,0,Math.PI*2);
-  ctx.clip();
-
-  // Rotating inner energy arcs
-  for(let i=0;i<3;i++){
-    const startAngle = frame*.035*(i%2===0?1:-1.3) + i*(Math.PI*2/3);
-    ctx.beginPath();
-    ctx.arc(cx,cy,r*(0.55 + i*0.14),startAngle,startAngle + Math.PI*0.85);
-    ctx.strokeStyle = i===1 ? "rgba(180,138,255,0.55)" : "rgba(110,248,255,0.6)";
-    ctx.lineWidth = (active ? 2.4 : 1.5)*scale;
-    ctx.stroke();
-  }
-
-  // Pulsing inner wave rings
-  const waveR = ((frame * (active ? 1.8 : 0.85)) % (r * 0.92)) + 6*scale;
-  ctx.beginPath();
-  ctx.arc(cx,cy,waveR,0,Math.PI*2);
-  ctx.strokeStyle = `rgba(175,252,255,${Math.max(0.08, 0.55 - waveR/(r*1.5))})`;
-  ctx.lineWidth = 1.5*scale;
-  ctx.stroke();
-
-  // Horizontal wave bands
-  for(let i=0;i<6;i++){
-    const bandY=cy-r+i*r*.4+Math.sin(frame*.04+i)*5*scale;
-    ctx.beginPath();
-    ctx.ellipse(cx,bandY,r*1.08,(4+Math.sin(frame*.05+i)*3)*scale,0,0,Math.PI*2);
-    ctx.strokeStyle=i%2?"rgba(140,115,255,.35)":"rgba(130,245,255,.38)";
-    ctx.lineWidth=1.3;
-    ctx.stroke();
-  }
-
-  const sweep=(Math.sin(frame*.03*speed)+1)/2;
-  const sx=cx-r+sweep*r*2;
-  const reflection=ctx.createLinearGradient(sx-20*scale,cy-r,sx+20*scale,cy+r);
-  reflection.addColorStop(0,"transparent");
-  reflection.addColorStop(.5,"rgba(220,255,255,.32)");
-  reflection.addColorStop(1,"transparent");
-  ctx.fillStyle=reflection;
-  ctx.fillRect(cx-r,cy-r,r*2,r*2);
-
-  if(active){
-    const sweepY=cy-r+((frame*3.4)%(r*2));
-    const scanGrad=ctx.createLinearGradient(cx-r,sweepY-12*scale,cx+r,sweepY+12*scale);
-    scanGrad.addColorStop(0,"transparent");
-    scanGrad.addColorStop(.5,"rgba(100,245,255,.75)");
-    scanGrad.addColorStop(1,"transparent");
-    ctx.fillStyle=scanGrad;
-    ctx.fillRect(cx-r,cy-r,r*2,r*2);
-  }
-
-  ctx.restore();
-
-  if(scanning){
-    const elapsed=timestamp-scanStart;
-    const pct=Math.min(elapsed/scanTotal,1);
-    const val=Math.round(pct*100);
-    progressFill.style.width=val+"%";
-    scanPercent.textContent=val+"%";
-
-    // Shuffle live number & BIG/SMALL while scanning
-    const rollingNum = Math.floor(Math.random() * 100);
-    const rollingSize = rollingNum >= 50 ? "BIG" : "SMALL";
-    coreNumber.textContent = String(rollingNum).padStart(2,"0");
-    coreBadge.textContent = rollingSize;
-    coreBadge.className = "core-badge " + rollingSize.toLowerCase();
-
-    const messages=[
-      "INITIALIZING CORE...",
-      "CALCULATING NUMBER...",
-      "EVALUATING BIG / SMALL...",
-      "FINALIZING RESULT..."
-    ];
-    scanText.textContent=messages[Math.min(3,Math.floor(pct*4))];
-
-    if(pct>=1) finishScan();
-  }
-
-  requestAnimationFrame(drawCore);
-}
-
-function startScan(){
-  if(scanning)return;
-
-  scanning=true;
-  scanStart=performance.now();
-
-  coreCard.classList.add("scanning");
-  scanBtn.disabled=true;
-  scanBtn.textContent="◈  GENERATING NUMBER...";
-
-  statePill.textContent="SCANNING";
-  coreName.textContent="SGOD AI ACTIVE";
-  coreSub.textContent="ANIMATING & ROLLING NUMBER";
-  scanText.textContent="INITIALIZING...";
-  scanPercent.textContent="0%";
-  progressFill.style.width="0%";
-
-  addLog("Core animation & number roll started","RUN");
-}
-
-function finishScan(){
-  scanning=false;
-  coreCard.classList.remove("scanning");
-
-  const finalNum = Math.floor(Math.random() * 100);
-  const label = finalNum >= 50 ? "BIG" : "SMALL";
-  const formattedNum = String(finalNum).padStart(2,"0");
-  currentNumber = finalNum;
-
-  coreNumber.textContent = formattedNum;
-  coreBadge.textContent = label;
-  coreBadge.className = "core-badge " + label.toLowerCase();
-
-  lastResult.textContent = `${formattedNum} · ${label}`;
-  lastResult.className = label === "BIG" ? "green" : "pink";
-
-  statePill.textContent="COMPLETE";
-  coreName.textContent=`RESULT: ${label}`;
-  coreSub.textContent=`NUMBER ${formattedNum} (${finalNum >= 50 ? "50–99 BIG" : "00–49 SMALL"})`;
-  scanText.textContent=`RESULT: ${formattedNum} (${label})`;
-  scanPercent.textContent="100%";
-  progressFill.style.width="100%";
-
-  totalScans++;
-  scanCount.textContent=String(totalScans).padStart(2,"0");
-
-  scanBtn.disabled=false;
-  scanBtn.textContent="✦  RUN NEW SCAN";
-
-  addLog(`Number ${formattedNum} → ${label}`, label);
-}
-
-function addLog(message,tag){
-  const row=document.createElement("div");
-  row.className="log-row";
-
-  const dot=document.createElement("span");
-  dot.className="log-dot";
-
-  const msg=document.createElement("span");
-  msg.textContent=message;
-
-  const time=document.createElement("span");
-  time.className="log-time";
-  time.textContent=tag;
-
-  row.append(dot,msg,time);
-  logs.prepend(row);
-
-  while(logs.children.length>8){
-    logs.removeChild(logs.lastElementChild);
-  }
-}
-
+// 30-second cycle display
 function updateClock(){
-  const now=new Date();
+  const now = new Date();
+  const sec = now.getSeconds();
+  const remaining = 30 - (sec % 30);
+  document.getElementById("timer").textContent = remaining;
 
-  $("clock").textContent=now.toLocaleTimeString("en-IN",{
-    hour12:false
-  });
+  // Demo period display in date + game-code + sequence format.
+  // The sequence is a local clock-derived demo counter.
+  const date = now.getFullYear().toString()
+    +String(now.getMonth()+1).padStart(2,"0")
+    +String(now.getDate()).padStart(2,"0");
 
-  const remaining=(60-now.getSeconds())%60;
-  $("timer").textContent="00:"+String(remaining).padStart(2,"0");
+  const secondsToday = now.getHours()*3600 + now.getMinutes()*60 + sec;
+  const sequence = Math.floor(secondsToday/30);
+  const period = date + "1000" + String(sequence).padStart(5,"0");
+
+  document.getElementById("period").textContent = period;
 }
-
-scanBtn.addEventListener("click",startScan);
-
-$("clearBtn").addEventListener("click",()=>{
-  logs.replaceChildren();
-  addLog("Terminal cleared","READY");
-});
-
-resize();
 updateClock();
 setInterval(updateClock,250);
-requestAnimationFrame(drawCore);
 
-})();
+// Demo scan animation only
+let scanning = false;
+
+function startScan(){
+  if(scanning) return;
+  scanning = true;
+
+  const btn = document.getElementById("scanBtn");
+  const status = document.getElementById("scanStatus");
+  const sys = document.getElementById("sys");
+  const fill = document.getElementById("fill");
+  const percent = document.getElementById("percent");
+  const title = document.getElementById("progTitle");
+  const module = document.getElementById("module");
+  const modStatus = document.getElementById("modStatus");
+
+  const messages=[
+    "INITIALIZING VISUAL CORE...",
+    "LOADING HOLOGRAPHIC MODULE...",
+    "SYNCHRONIZING INTERFACE...",
+    "PROCESSING DEMO SEQUENCE...",
+    "CALIBRATING EFFECTS...",
+    "FINALIZING ANIMATION..."
+  ];
+
+  btn.disabled=true;
+  btn.textContent="⟳ SCANNING...";
+  sys.textContent="ACTIVE";
+  modStatus.textContent="ACTIVE";
+
+  let p=0;
+  const interval=setInterval(()=>{
+    p=Math.min(100,p+Math.random()*4+1);
+    fill.style.width=p+"%";
+    percent.textContent=Math.floor(p)+"%";
+
+    const index=Math.min(Math.floor(p/18),messages.length-1);
+    status.textContent=messages[index];
+    module.textContent=messages[index];
+    title.textContent="VISUAL SEQUENCE RUNNING";
+
+    if(p>=100){
+      clearInterval(interval);
+      status.textContent="DEMO SEQUENCE COMPLETE";
+      sys.textContent="READY";
+      module.textContent="Animation complete";
+      modStatus.textContent="DONE";
+      title.textContent="COMPLETED";
+      btn.textContent="✓ SCAN COMPLETE";
+
+      setTimeout(()=>{
+        scanning=false;
+        btn.disabled=false;
+        btn.textContent="⚡ START SCAN";
+        status.textContent="SYSTEM READY • AWAITING INPUT";
+        module.textContent="Waiting for command";
+        modStatus.textContent="IDLE";
+        fill.style.width="0%";
+        percent.textContent="0%";
+        title.textContent="INTERFACE PROGRESS";
+      },1500);
+    }
+  },100);
+}
+
+// Demo activity history
+const historyList=document.getElementById("historyList");
+const logs=["Core interface booted","Neon modules initialized","Timer synchronized","Visual scan ready","HUD calibration complete"];
+
+logs.forEach((msg,i)=>{
+  const row=document.createElement("div");
+  row.className="history-row";
+  row.innerHTML="<span>"+msg+"</span><span>READY</span>";
+  historyList.appendChild(row);
+});
 </script>
 </body>
 </html>
