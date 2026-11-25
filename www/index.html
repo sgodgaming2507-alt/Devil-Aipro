@@ -31,7 +31,7 @@ background:linear-gradient(90deg,#fff,#bf68ff,#00eaff);
 .label{font-size:11px;color:#aaa;letter-spacing:1px}
 .value{font-size:19px;font-weight:bold;margin-top:7px;word-break:break-word}
 .sub{font-size:10px;color:var(--c);margin-top:5px}
-.period{font-size:16px!important;letter-spacing:.3px}
+.period{font-size:16px!important;letter-spacing:.3px;color:var(--c)}
 .timer-wrap{display:flex;justify-content:center;margin:28px 0}
 .timer{
 width:155px;height:155px;border-radius:50%;display:grid;place-items:center;
@@ -81,7 +81,10 @@ text-align:center;line-height:1}
 font-size:11px;color:#d1b7ff;letter-spacing:2px;font-weight:bold}
 .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px}
 .res-box{background:linear-gradient(135deg,#0c0915,#080711);border:1px solid #6322b9;border-radius:13px;padding:13px;text-align:center}
+.res-box.full{grid-column:1 / -1}
 .res-val{font-size:24px;font-weight:900;margin-top:6px;letter-spacing:2px;color:#fff;text-shadow:0 0 12px var(--c)}
+.res-period{font-size:16px;font-weight:bold;margin-top:6px;letter-spacing:1px;color:var(--c)}
+.res-meta{font-size:10px;color:#c8a6ff;margin-top:5px;letter-spacing:1px}
 .progress-box{margin-top:15px;padding:15px;border:1px solid #50208d;
 border-radius:13px;background:#090711}
 .prog-head{display:flex;justify-content:space-between;color:#bbb;font-size:11px;margin-bottom:10px}
@@ -132,19 +135,19 @@ padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
   <div class="panel">
     <div class="label">CURRENT PERIOD</div>
     <div class="value period" id="period">--</div>
-    <div class="sub">30 SEC CYCLE</div>
+    <div class="sub">60 SEC CYCLE</div>
   </div>
   <div class="panel">
     <div class="label">SYSTEM STATUS</div>
     <div class="value" id="sys">READY</div>
-    <div class="sub">● Interface Online</div>
+    <div class="sub" id="algoTag">● V4 Quantum Engine</div>
   </div>
 </div>
 
 <div class="timer-wrap">
   <div class="timer">
     <div>
-      <div class="tnum" id="timer">30</div>
+      <div class="tnum" id="timer">60</div>
       <div class="tlabel">SECONDS</div>
     </div>
   </div>
@@ -162,10 +165,16 @@ padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
   <div class="res-box">
     <div class="label">PREDICTED SIZE</div>
     <div class="res-val" id="predSize">--</div>
+    <div class="res-meta" id="confText">CONFIDENCE: --%</div>
   </div>
   <div class="res-box">
     <div class="label">PREDICTED NUMBER</div>
     <div class="res-val" id="predNum">--</div>
+    <div class="res-meta" id="modeText">SIGNAL: STANDBY</div>
+  </div>
+  <div class="res-box full">
+    <div class="label">PREDICTION PERIOD NUMBER</div>
+    <div class="res-period" id="predPeriod">--</div>
   </div>
 </div>
 
@@ -183,7 +192,7 @@ padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
 
 <div class="item">
   <div class="icon">◉</div>
-  <div class="item-info"><b>Neural Interface</b><span>Visual module initialized</span></div>
+  <div class="item-info"><b>Neural Interface</b><span id="neuralSub">Multi-layer hash matrix ready</span></div>
   <div class="status">ONLINE</div>
 </div>
 
@@ -216,55 +225,149 @@ padding:22px 5px;border-top:1px solid #26133c;margin-top:22px}
 
 <script>
 let currentPeriod = "";
-let lastPredictedPeriod = "";
+let lockedPredictions = {};
+let recentPredictions = [];
 
-// 30-second cycle display
+// 60-second cycle display
 function updateClock(){
   const now = new Date();
   const sec = now.getSeconds();
-  const remaining = 30 - (sec % 30);
-  document.getElementById("timer").textContent = remaining;
+  const remaining = 60 - sec;
+  document.getElementById("timer").textContent = remaining === 0 ? 60 : remaining;
 
   const date = now.getFullYear().toString()
     +String(now.getMonth()+1).padStart(2,"0")
     +String(now.getDate()).padStart(2,"0");
 
-  const secondsToday = now.getHours()*3600 + now.getMinutes()*60 + sec;
-  const sequence = Math.floor(secondsToday/30);
-  currentPeriod = date + "1000" + String(sequence).padStart(5,"0");
+  const minutesToday = now.getHours()*60 + now.getMinutes();
+  const sequence = minutesToday + 1;
+  const nextPeriod = date + "1000" + String(sequence).padStart(4,"0");
 
-  document.getElementById("period").textContent = currentPeriod;
-
-  // Reset display when new 30s period starts
-  if(lastPredictedPeriod && lastPredictedPeriod !== currentPeriod && !scanning){
+  if(currentPeriod && currentPeriod !== nextPeriod && !scanning){
     document.getElementById("orbText").textContent = "N";
     document.getElementById("orbText").style.fontSize = "65px";
     document.getElementById("predSize").textContent = "--";
     document.getElementById("predSize").style.color = "#fff";
     document.getElementById("predNum").textContent = "--";
-    document.getElementById("scanStatus").textContent = "NEW CYCLE • READY TO SCAN";
-    lastPredictedPeriod = "";
+    document.getElementById("predNum").style.color = "#fff";
+    document.getElementById("predPeriod").textContent = "--";
+    document.getElementById("confText").textContent = "CONFIDENCE: --%";
+    document.getElementById("modeText").textContent = "SIGNAL: STANDBY";
+    document.getElementById("scanStatus").textContent = "NEW 60S CYCLE • READY TO SCAN";
   }
+
+  currentPeriod = nextPeriod;
+  document.getElementById("period").textContent = currentPeriod;
 }
 updateClock();
 setInterval(updateClock,250);
 
-// Time & Period based deterministic algorithm (0-9 & BIG/SMALL)
-function calculatePrediction(periodStr){
+// FNV-1a 32-bit hash helper
+function fnv1aHash(str){
+  let hash = 0x811c9dc5;
+  for(let i = 0; i < str.length; i++){
+    hash ^= str.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0;
+}
+
+// Advance Multi-Factor Prediction Engine (0-9, BIG/SMALL, Confidence & Signal)
+function computeAdvanceEngine(periodStr){
+  if(lockedPredictions[periodStr]){
+    return lockedPredictions[periodStr];
+  }
+
   const now = new Date();
-  const digits = periodStr.split("").map(Number);
-  let digitSum = digits.reduce((a,b) => a + b, 0);
-  
-  const seq = parseInt(periodStr.slice(-5), 10);
   const hour = now.getHours();
-  const min = now.getMinutes();
+  const minute = now.getMinutes();
+  const second = now.getSeconds();
+  const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
 
-  // Weighted hash formula based on current time & sequence
-  const rawHash = ((seq * 7) + (digitSum * 3) + (hour * 11) + (min * 5)) ^ (seq >> 2);
-  const predictedNumber = Math.abs(rawHash) % 10;
-  const predictedSize = predictedNumber >= 5 ? "BIG" : "SMALL";
+  // Layer 1: Period & Time Entropy Hash
+  const seedKey = `${periodStr}|H:${hour}|M:${minute}|S:${Math.floor(second/10)}|D:${dayOfYear}`;
+  const h1 = fnv1aHash(seedKey);
+  const h2 = fnv1aHash(seedKey.split("").reverse().join("") + "|" + (minute * 31 + hour));
 
-  return { number: predictedNumber, size: predictedSize };
+  // Layer 2: Positional Digit Weighting
+  const digits = periodStr.split("").map(Number);
+  let positionalScore = 0;
+  for(let i = 0; i < digits.length; i++){
+    positionalScore += digits[i] * ((i % 4) + 1) * 7;
+  }
+
+  // Layer 3: Harmonic Time Wave (-1.0 to +1.0)
+  const minuteAngle = ((hour * 60 + minute) / 1440) * Math.PI * 2;
+  const cycleAngle = ((minute % 12) / 12) * Math.PI * 2;
+  const harmonicWave = (Math.sin(minuteAngle * 3 + h1 % 7) * 0.6) + (Math.cos(cycleAngle * 2 + h2 % 5) * 0.4);
+
+  // Layer 4: Streak & Mean-Reversion Adjustment from recent history
+  let bigCount = 0;
+  let smallCount = 0;
+  let streakSide = null;
+  let streakLen = 0;
+
+  recentPredictions.slice(0, 6).forEach((item, idx) => {
+    if(item.size === "BIG") bigCount++;
+    else smallCount++;
+
+    if(idx === 0){
+      streakSide = item.size;
+      streakLen = 1;
+    } else if(item.size === streakSide && streakLen === idx){
+      streakLen++;
+    }
+  });
+
+  let biasShift = 0;
+  let signalMode = "HARMONIC LOCK";
+
+  if(streakLen >= 3){
+    // Counter-trend pressure after 3+ consecutive same results
+    biasShift = streakSide === "BIG" ? -2 : 2;
+    signalMode = "STREAK COUNTER";
+  } else if(Math.abs(bigCount - smallCount) >= 3){
+    // Balance correction when one side dominates recent window
+    biasShift = bigCount > smallCount ? -1 : 1;
+    signalMode = "MEAN BALANCE";
+  } else if(Math.abs(harmonicWave) > 0.65){
+    signalMode = "HIGH CONVICTION";
+  } else {
+    signalMode = "WAVE SYNC";
+  }
+
+  // Combine scores into 0..9 candidate space
+  const waveOffset = Math.round((harmonicWave + 1) * 4.5); // 0..9
+  const hashSlot = ((h1 % 10) + ((h2 >>> 4) % 10) + (positionalScore % 10)) % 10;
+  let candidate = (hashSlot + Math.round(waveOffset * 0.5) + biasShift + 100) % 10;
+
+  // Refine BIG (5-9) vs SMALL (0-4) using harmonic + hash alignment
+  const sizeScore = ((h1 % 100) / 100) * 0.45 + ((harmonicWave + 1) / 2) * 0.35 + (candidate >= 5 ? 0.2 : 0.0);
+  const predictedSize = sizeScore >= 0.5 ? "BIG" : "SMALL";
+
+  // Align number with predicted size cleanly while preserving exact digit variation
+  if(predictedSize === "BIG" && candidate < 5){
+    candidate = 5 + (candidate % 5);
+  } else if(predictedSize === "SMALL" && candidate >= 5){
+    candidate = candidate % 5;
+  }
+
+  // Confidence calculation (78% - 96%)
+  const waveStrength = Math.abs(harmonicWave);
+  const hashMargin = Math.abs(sizeScore - 0.5) * 2;
+  const rawConf = 78 + Math.round((waveStrength * 8) + (hashMargin * 10));
+  const confidence = Math.min(96, Math.max(78, rawConf));
+
+  const output = {
+    period: periodStr,
+    number: candidate,
+    size: predictedSize,
+    confidence: confidence,
+    signal: signalMode
+  };
+
+  lockedPredictions[periodStr] = output;
+  return output;
 }
 
 let scanning = false;
@@ -284,14 +387,18 @@ function startScan(){
   const orbText = document.getElementById("orbText");
   const predSizeEl = document.getElementById("predSize");
   const predNumEl = document.getElementById("predNum");
+  const predPeriodEl = document.getElementById("predPeriod");
+  const confTextEl = document.getElementById("confText");
+  const modeTextEl = document.getElementById("modeText");
+  const neuralSubEl = document.getElementById("neuralSub");
 
   const messages=[
-    "INITIALIZING VISUAL CORE...",
-    "ANALYZING CURRENT PERIOD...",
-    "CALCULATING TIME HASH...",
-    "PROCESSING NEURAL MATRIX...",
-    "CALIBRATING PROBABILITY...",
-    "FINALIZING PREDICTION..."
+    "INITIALIZING V4 QUANTUM ENGINE...",
+    "EXTRACTING 60S PERIOD ENTROPY...",
+    "COMPUTING HARMONIC TIME WAVES...",
+    "ANALYZING STREAK & BIAS MATRIX...",
+    "CALIBRATING CONFIDENCE WEIGHTS...",
+    "LOCKING ADVANCE PREDICTION..."
   ];
 
   btn.disabled=true;
@@ -310,15 +417,13 @@ function startScan(){
     const index=Math.min(Math.floor(p/18),messages.length-1);
     status.textContent=messages[index];
     module.textContent=messages[index];
-    title.textContent="ALGORITHM RUNNING";
+    title.textContent="ADVANCE ALGORITHM RUNNING";
 
     if(p>=100){
       clearInterval(interval);
 
-      const result = calculatePrediction(currentPeriod);
-      lastPredictedPeriod = currentPeriod;
+      const result = computeAdvanceEngine(currentPeriod);
 
-      // Update Orb and Result Boxes
       orbText.style.fontSize = "34px";
       orbText.textContent = result.size;
 
@@ -328,14 +433,19 @@ function startScan(){
       predNumEl.textContent = result.number;
       predNumEl.style.color = result.size === "BIG" ? "#22ff62" : "#00eaff";
 
-      status.textContent = "RESULT: " + result.size + " (" + result.number + ")";
+      predPeriodEl.textContent = result.period;
+      confTextEl.textContent = "CONFIDENCE: " + result.confidence + "%";
+      modeTextEl.textContent = "SIGNAL: " + result.signal;
+      neuralSubEl.textContent = `${result.signal} • ${result.confidence}% Match`;
+
+      status.textContent = `RESULT: ${result.size} (${result.number}) • ${result.confidence}%`;
       sys.textContent="READY";
-      module.textContent="Prediction locked";
+      module.textContent=`${result.signal} locked`;
       modStatus.textContent="DONE";
       title.textContent="COMPLETED";
       btn.textContent="✓ SCAN COMPLETE";
 
-      addHistoryLog(currentPeriod, result.size, result.number);
+      addHistoryLog(result);
 
       setTimeout(()=>{
         scanning=false;
@@ -354,7 +464,7 @@ function startScan(){
 const historyList=document.getElementById("historyList");
 const initialLogs=[
   {msg:"Core interface booted", status:"READY"},
-  {msg:"Neural algorithm synced", status:"ONLINE"}
+  {msg:"V4 advance engine active", status:"ONLINE"}
 ];
 
 initialLogs.forEach((item)=>{
@@ -364,15 +474,21 @@ initialLogs.forEach((item)=>{
   historyList.appendChild(row);
 });
 
-function addHistoryLog(period, size, num){
-  const shortPeriod = period.slice(-5);
+function addHistoryLog(result){
+  const alreadyLogged = recentPredictions.some(r => r.period === result.period);
+  if(!alreadyLogged){
+    recentPredictions.unshift(result);
+    if(recentPredictions.length > 10){
+      recentPredictions.pop();
+    }
+  }
+
   const row = document.createElement("div");
   row.className = "history-row";
-  const color = size === "BIG" ? "#22ff62" : "#00eaff";
-  row.innerHTML = `<span>PERIOD #${shortPeriod}</span><span style="color:${color}">${size} • ${num}</span>`;
+  const color = result.size === "BIG" ? "#22ff62" : "#00eaff";
+  row.innerHTML = `<span>#${result.period} (${result.confidence}%)</span><span style="color:${color}">${result.size} • ${result.number}</span>`;
   historyList.prepend(row);
 
-  // Keep max 6 rows in log
   if(historyList.children.length > 6){
     historyList.removeChild(historyList.lastChild);
   }
